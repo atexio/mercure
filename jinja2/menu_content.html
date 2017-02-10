@@ -1,0 +1,16 @@
+{% if request.user.is_authenticated %}
+    {% for item in request.user.get_menu() %}
+        {% if item.get('type') == 'separator' %}
+            <li class="menu-{% if in_navbar %}vertical-{% endif %}separator"></li>
+        {% else %}
+            <li {% if item.url|lower in request.get_full_path()|lower %} class="active"{% endif %}>
+                <a href="{{ item.url }}">
+                    {% if item.get('glyphicon') %}
+                        <span class="glyphicon glyphicon-{{ item.glyphicon }}" style="margin-right:15px;"></span>
+                    {% endif %}
+                    {{ item.name }}
+                </a>
+            </li>
+        {% endif %}
+    {% endfor %}
+{% endif %}

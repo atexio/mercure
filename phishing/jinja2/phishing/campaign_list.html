@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}{% trans %}Campaigns{% endtrans %}{% endblock %}
+
+{% block content %}
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>{% trans %}Campaigns name{% endtrans %}</th>
+                <th>{% trans %}Launching date{% endtrans %}</th>
+                <th>
+                    {% if request.user.has_perm('phishing.add_campaign') %}
+                        <a class="btn btn-success pull-right"
+                           href="{{ url('campaign_add') }}" role="button"
+                           data-toggle="modal" id="addCampaign">
+                            <span class="glyphicon glyphicon-file"></span>
+                            {% trans %}Start new campaign{% endtrans %}
+                        </a>
+                    {% endif %}
+                </th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for object in object_list %}
+                <tr id="campaign_{{ object.pk }}" onclick="document.location = '{{ url('campaign_dashboard', args=(object.pk,)) }}'" style="cursor: pointer">
+                    <td>{{ object }}</td>
+                    <td>{{ object.created_at }}</td>
+                    <td>
+                        <div class="btn-group pull-right">
+                            <a class="btn btn-info" id="edit_campaign_{{ object.pk }}"
+                               href="{{ url('campaign_dashboard', args=(object.pk,)) }}" role="button">
+                                <span class="glyphicon glyphicon-book"></span>
+                                {% trans %}Report{% endtrans %}
+                            </a>
+
+                            {% if request.user.has_perm('phishing.delete_campaign') %}
+                                <a class="btn btn-danger deletebtn" id="delete_campaign_{{ object.pk }}"
+                                   href="{{ url('campaign_delete', args=(object.pk,)) }}"
+                                   role="button" title="{% trans %}Remove{% endtrans %}">
+                                    <span class="glyphicon glyphicon-trash"></span>
+                                </a>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

@@ -1,0 +1,35 @@
+# Basics
+setuptools==34.1.1
+django==1.10.5
+djangorestframework==3.5.4
+
+# Templates
+django-bootstrap-form==3.2.1
+jinja2==2.9.5
+
+# Debugging
+raven==5.32.0
+
+# Security
+django-axes==2.3.2
+
+# Data parsing
+beautifulsoup4==4.5.3
+html5lib==1.0b10
+cchardet==1.1.2
+
+# Networking
+requests==2.13.0
+
+# Utils
+django-model-utils==2.6.1
+pyshorteners==0.6.0
+pytz==2016.10
+unipath==1.1
+
+# Testing
+selenium==3.0.2
+
+# Documentation
+sphinx==1.5.2
+sphinx_rtd_theme==0.1.9

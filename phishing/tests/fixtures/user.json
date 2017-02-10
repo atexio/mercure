@@ -1,0 +1,20 @@
+[
+  	{
+		"model": "phishing.user",
+		"pk": 1,
+		"fields": {
+			"password": "pbkdf2_sha256$30000$gUt1Uz6X2HNH$5Pz91kEc4WE5aum52IX3xpUMo6vPyREA3/ItDi2BziY=",
+			"last_login": "2017-01-02T10:51:36.225Z",
+			"is_superuser": true,
+			"username": "admin",
+			"first_name": "",
+			"last_name": "",
+			"email": "admin@synhack.fr",
+			"is_staff": true,
+			"is_active": true,
+			"date_joined": "2016-12-18T17:35:31.338Z",
+			"groups": [],
+			"user_permissions": []
+		}
+	}
+]

@@ -1,0 +1,15 @@
+{% if graphs.landing_page_open_pie %}
+    <div class="col-md-3">
+        <h3>{% trans %}Landing page open{% endtrans %}</h3>
+        <canvas id="landing_page_open_pie"></canvas>
+        <p><b>{% trans %}Total open{% endtrans %}:</b> {{ graphs.landing_page_open_pie.opened or 0 }}</p>
+    </div>
+{% endif %}
+
+{% if graphs.landing_page_post_pie %}
+    <div class="col-md-3">
+        <h3>{% trans %}Landing page post{% endtrans %}</h3>
+        <canvas id="landing_page_post_pie"></canvas>
+        <p><b>{% trans %}Total POST{% endtrans %}:</b> {{ graphs.landing_page_post_pie.yes or 0 }}</p>
+    </div>
+{% endif %}

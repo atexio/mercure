@@ -1,0 +1,20 @@
+{% if graphs.target_group_email_open_pie %}
+    <div class="col-md-3">
+        <h3>{% trans %}Emails open by group{% endtrans %}</h3>
+        <canvas id="target_group_email_open_pie"></canvas>
+    </div>
+{% endif %}
+
+{% if graphs.target_group_landing_page_open_pie %}
+    <div class="col-md-3">
+        <h3>{% trans %}Landing page open by group{% endtrans %}</h3>
+        <canvas id="target_group_landing_page_open_pie"></canvas>
+    </div>
+{% endif %}
+
+{% if graphs.target_group_landing_page_post_pie %}
+    <div class="col-md-3">
+        <h3>{% trans %}Landing page post by group{% endtrans %}</h3>
+        <canvas id="target_group_landing_page_post_pie"></canvas>
+    </div>
+{% endif %}

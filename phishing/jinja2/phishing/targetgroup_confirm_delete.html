@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    {% set cancel_url_name='target_group_list' %}
+    {% include 'includes/generic_confirm_delete.html' with context %}
+{% endblock %}

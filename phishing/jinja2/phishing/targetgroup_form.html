@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {% if object %}
+        {% trans %}Edit{% endtrans %}
+    {% else %}
+        {% trans %}Add new{% endtrans %}
+    {% endif %}
+    {% trans %}target group{% endtrans %}
+{% endblock %}
+
+{% block content %}
+    <form method="post">
+        {{ form|bootstrap }}
+        {{ csrf_input }}
+
+        <fieldset>
+            <legend>{% trans %}Targets{% endtrans %}</legend>
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        {% for field in inlines.0.visible_fields() %}
+                            <th>{{ field.label_tag() }}</th>
+                        {% endfor %}
+                        <th>
+                            <button type="button" data-toggle="modal" data-target="#importCSV" class="btn btn-primary">{% trans %}Import CSV{% endtrans %}</button>
+                        </th>
+                    <tr>
+                </thead>
+
+                <tbody>
+                    {% for form in inlines %}
+                        <tr>
+                            {% for field in form.visible_fields() %}
+                                <td>{{ field }}</td>
+                            {% endfor %}
+                            <td>{{ form.id }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </fieldset>
+        {{ inlines.management_form }}
+
+        <button type="submit" class="btn btn-success pull-right">
+            {% if object %}
+                {% trans %}Save{% endtrans %}
+            {% else %}
+                {% trans %}Add{% endtrans %}
+            {% endif %}
+            {% trans %}target group{% endtrans %}
+        </button>
+    </form>
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="importCSV" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+      </div>
+      <div class="modal-body">
+        <textarea id="csvField" class="form-control"></textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="importBtn">Import</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_script %}
+    <script src="{{ static('js/jquery.formset.js') }}"></script>
+    <script src="{{ static('js/papaparse.min.js') }}"></script>
+    <script type="text/javascript">
+        $(function() {
+            $("form tbody tr").formset({
+                addCssClass: "btn btn-primary",
+                addText: "{% trans %}Add new target{% endtrans %}",
+                deleteCssClass: "btn btn-danger",
+                deleteText: "{% trans %}Delete target{% endtrans %}",
+                prefix: "{{ inlines.prefix }}",
+            });
+
+            $importBtn = $('#importBtn');
+            $csvField = $('#csvField');
+
+            $importBtn.click(function() {
+                csv = $csvField.val();
+                parsedCSV = Papa.parse(csv);
+                if(parsedCSV['errors'].length) {
+                    alert('CSV seems to be invalid');
+                    return;
+                }
+
+                $addButton = $('.dynamic-form-add').find('a');
+                parsedCSV['data'].forEach(function(entry){
+                    fieldId = $('#id_targets-TOTAL_FORMS').val() - 1;
+                    $('#id_targets-'+fieldId+'-email').val(entry[0]);
+                    $('#id_targets-'+fieldId+'-first_name').val(entry[1]);
+                    $('#id_targets-'+fieldId+'-last_name').val(entry[2]);
+                    $addButton.click();
+                });
+            });
+        });
+    </script>
+{%  endblock %}

@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}{% trans %}Target group{% endtrans %}{% endblock %}
+
+{% block content %}
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>{% trans %}Target group name{% endtrans %}</th>
+                <th>{% trans %}Group size{% endtrans %}</th>
+                <th>
+                    {% if request.user.has_perm('phishing.add_targetgroup') %}
+                        <a class="btn btn-success pull-right" href="{{ url('target_group_add' ) }}" role="button" data-toggle="modal">
+                            <span class="glyphicon glyphicon-file"></span>
+                            {% trans %}New target group{% endtrans %}
+                        </a>
+                    {% endif %}
+                </th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for object in object_list %}
+                <tr id="targetgroup_{{ object.pk }}"
+                    {% if request.user.has_perm('phishing.change_targetgroup') %}
+                        onclick="document.location = '{{ url('target_group_edit', args=(object.pk,)) }}'" style="cursor: pointer"
+                    {% endif %}
+                >
+                    <td>{{ object }}</td>
+                    <td>{{ object.targets.count() }}</td>
+                    <td>
+                        <div class="btn-group pull-right">
+                            {% if request.user.has_perm('phishing.change_targetgroup') %}
+                                <a class="btn btn-default" id="edit_targetgroup_{{ object.pk }}"
+                                   href="{{ url('target_group_edit', args=(object.pk,)) }}" role="button">
+                                    <span class="glyphicon glyphicon-pencil"></span>
+                                    {% trans %}Edit{% endtrans %}
+                                </a>
+                            {% endif %}
+
+                            {% if request.user.has_perm('phishing.add_targetgroup') %}
+                                <a class="btn btn-danger deletebtn" id="delete_targetgroup_{{ object.pk }}"
+                                   href="{{ url('target_group_delete', args=(object.pk,)) }}"
+                                   role="button"
+                                    title="{% trans %}Delete{% endtrans %}">
+                                    <span class="glyphicon glyphicon-trash"></span>
+                                </a>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

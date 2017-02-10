@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}{% trans %}Attachment{% endtrans %}{% endblock %}
+
+{% block content %}
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>{% trans %}Attachment name{% endtrans %}</th>
+                <th><a class="btn btn-success pull-right" href="{{ url('attachment_add') }}" role="button" data-toggle="modal">
+                    <span class="glyphicon glyphicon-file"></span>
+                    {% trans %}New attachment{% endtrans %}</a>
+                </th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for object in object_list %}
+                <tr id="attachment_{{ object.pk }}"
+                    onclick="document.location = '{{ url('attachment_edit', args=(object.pk,)) }}'" style="cursor: pointer">
+                    <td>{{ object }}</td>
+                    <td>
+                        <div class="btn-group pull-right">
+                            <a class="btn btn-default" id="edit_attachment_{{ object.pk }}"
+                               href="{{ url('attachment_edit', args=(object.pk,)) }}" role="button">
+                                <span class="glyphicon glyphicon-pencil"></span>
+                                {% trans %}Edit{% endtrans %}
+                            </a>
+                            <a class="btn btn-danger deletebtn" id="delete_attachment_{{ object.pk }}"
+                               href="{{ url('attachment_delete', args=(object.pk,)) }}" role="button" title="{% trans %}Remove{% endtrans %}">
+                                <span class="glyphicon glyphicon-trash"></span>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

@@ -1,0 +1,19 @@
+[
+	{
+		"model": "phishing.target",
+		"pk": 1,
+		"fields": {
+			"email": "test@synhack.fr",
+			"group": 1,
+			"first_name": "John",
+			"last_name": "Doe"
+		}
+	},
+	{
+		"model": "phishing.targetgroup",
+		"pk": 1,
+		"fields": {
+			"name": "Test"
+		}
+	}
+]

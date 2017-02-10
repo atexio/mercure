@@ -1,0 +1,213 @@
+{% extends 'base.html' %}
+
+{% block title %}{% trans %}Campaigns report{% endtrans %}{% endblock %}
+
+{% block content %}
+    <div>
+        <ul class="nav nav-tabs" role="tablist">
+            {% for tab in tabs_layout %}
+                <li role="presentation"{% if loop.first %} class="active"{% endif %}>
+                    <a href="#{{ tab|slugify }}" aria-controls="{{ tab|slugify }}" role="tab" data-toggle="tab">{{ tab }}</a>
+                </li>
+            {% endfor %}
+        </ul>
+
+        <div class="tab-content">
+            {% for tab, templates in tabs_layout.items() %}
+                <div role="tabpanel" class="tab-pane{% if loop.first %} active{% endif %}" id="{{ tab|slugify }}">
+                    {% if loop.first %}
+                        <div class="row">
+                            <canvas id="all_histogram" height="50"></canvas>
+                        </div>
+
+                        <div class="row" style="text-align: center">
+                    {% endif %}
+
+                    {% for template in templates %}
+                        {% include 'phishing/dashboard_parts/'~template %}
+                    {% endfor %}
+
+                    {% if loop.first %}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_script %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+    <script>
+        var charts = {};
+        var charts_data = {
+            {% for index, values in graphs.items() %}
+                {{ index }}: {{ values|safe }},
+            {% endfor %}
+        };
+        var colors_list = [
+            //Light1
+            "#EC7553",
+            "#3A7696",
+            "#ECA653",
+            "#3BA76D",
+            //Basic
+            "#D9532C",
+            "#22668A",
+            "#D98A2C",
+            "#1F9958",
+            //Dark1
+            "#B13714",
+            "#124F70",
+            "#B16914",
+            "#0E7D42",
+            //Dark2
+            "#8A1F00",
+            "#053B58",
+            "#8A4B00",
+            "#00622D"
+        ];
+
+        function* color_generator() {
+            // infinite stream values
+            while (true) for (var item of colors_list) yield item;
+        }
+
+        function init_all_graph() {
+            for (var canvas_id in charts_data)
+                init_graph(canvas_id);
+        }
+
+        function init_graph(canvas_id) {
+            // get canvas and check for init
+            var canvas = document.getElementById(canvas_id);
+            if (!canvas)                return; // not canvas
+            if (!canvas.offsetParent)   return; // not canvas visible
+            if (charts[canvas_id])      return; // graph already exist
+
+            // get loader handler
+            var canvas_id_split = canvas_id.split('_');
+            var loader_name = 'load_' + canvas_id_split[canvas_id_split.length - 1];
+            var loader_handler = window[loader_name];
+
+            if (!loader_handler)
+                return console.log('"' + canvas_id + '" graph type unknown');
+
+            // init graph
+            charts[canvas_id] = loader_handler(canvas, charts_data[canvas_id]);
+
+            // add legend
+            var legend = document.getElementById(canvas_id + "_legend");
+            if (legend) {
+                legend.innerHTML = charts[canvas_id].generateLegend();
+                legend.className += " chart-legend";
+            }
+        }
+
+        function load_histogram(canvas, values) {
+            // get data
+            var color = color_generator();
+            var data = {labels: [], datasets: []};
+
+            var to_date = function(key) {
+                return new Date(key * 1000);
+            };
+
+            for (var label in values) {
+                var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(color.next().value);
+                var r = parseInt(result[1], 16);
+                var g = parseInt(result[2], 16);
+                var b = parseInt(result[3], 16);
+
+                data.labels = Object.keys(values[label]).map(to_date);
+                data.datasets.push({
+                    label: label,
+                    fill: false,
+                    lineTension: 0.1,
+                    borderColor: "rgba("+r+","+g+","+b+",1)",
+                    fillColor: "rgba("+r+","+g+","+b+",0.2)",
+                    backgroundColor: "rgba("+r+","+g+","+b+",0.2)",
+                    pointBorderColor: "rgba("+r+","+g+","+b+",1)",
+                    pointHoverBackgroundColor: "rgba("+r+","+g+","+b+",1)",
+                    pointHoverBorderColor: "rgba("+r+","+g+","+b+",1)",
+                    data: Object.keys(values[label]).map(function (key) {
+                        return values[label][key];
+                    })
+                });
+            }
+
+            var options = {
+                scales: {
+                    xAxes: [{
+                        type: "time",
+                        time: {
+                            format: 'MM/DD/YYYY HH:mm',
+                            tooltipFormat: 'll HH:mm'
+                        },
+                        scaleLabel: {
+                            display: true,
+                            labelString: '{% trans %}Date{% endtrans %}'
+                        },
+                        ticks: {
+                            maxRotation: 0
+                        }
+                    }],
+                    yAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: '{% trans %}Count{% endtrans %}'
+                        }
+                    }]
+                }
+            };
+
+            // round date (merge)
+            if (data.labels.length > 30*24)
+                options.scales.xAxes[0].time.round = 'day';
+
+            if (data.labels.length > 3*30*24)
+                options.scales.xAxes[0].time.round = 'week';
+
+            if (data.labels.length > 6*30*24)
+                options.scales.xAxes[0].time.round = 'month';
+
+            // create graph
+            return new Chart(canvas, {
+                type: 'line',
+                data: data,
+                options: options
+            });
+        }
+
+        function load_pie(canvas, values) {
+            var data = {
+                labels: Object.keys(values),
+                datasets: [
+                    {
+                        data: Object.keys(values).map(function (key) {
+                            return values[key];
+                        }),
+                        backgroundColor: colors_list,
+                        hoverBackgroundColor: colors_list
+                    }
+                ]
+            };
+
+            // create graph
+            return new Chart(canvas, {
+                type: 'pie',
+                data: data,
+            });
+        }
+
+        $(function() {
+            init_all_graph();
+
+            $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                init_all_graph();
+            })
+        })
+    </script>
+{% endblock %}

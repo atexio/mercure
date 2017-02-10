@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Loading</title>
+        {% if redirect_url %}<base href="{{ redirect_url }}" />{% endif %}
+    </head>
+
+    <body>
+        <form id="form" action="{{ action }}" method="post">
+            {% for name, values in post.items() %}
+                <input type="hidden" name="{{ name }}" value="{{ values }}" />
+            {% endfor %}
+        </form>
+
+        <script>document.getElementById('form').submit();</script>
+    </body>
+</html>

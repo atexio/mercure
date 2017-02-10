@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {% if object %}
+        {% trans %}Edit{% endtrans %}
+    {% else %}
+        {% trans %}Add new{% endtrans %}
+    {% endif %}
+    {% trans %}landing page{% endtrans %}
+{% endblock %}
+
+{% block content %}
+    <form method="post">
+        {% for field in form %}
+            {% if field.name != 'html' %}
+                {{ field|bootstrap }}
+            {% endif %}
+        {% endfor %}
+
+        <fieldset>
+            <legend>{% trans %}Actions{% endtrans %}</legend>
+            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#importUrl">{% trans %}Import from URL{% endtrans %}</button>
+
+            {% for template_actions in templates_actions %}
+                {% include template_actions %}
+            {% endfor %}
+        </fieldset><br />
+
+        <fieldset>
+            <legend>{% trans %}Content{% endtrans %}</legend>
+            <div>
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation" class="active">
+                        <a href="#html" aria-controls="vars" role="tab" data-toggle="tab">{% trans %}Page{% endtrans %}</a>
+                    </li>
+                    <li role="presentation">
+                        <a href="#vars" aria-controls="vars" role="tab" data-toggle="tab">{% trans %}Variables{% endtrans %}</a>
+                    </li>
+                </ul>
+
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane active" id="html">
+                        {{ form.html|bootstrap }}
+                    </div>
+
+                    <div role="tabpanel" class="tab-pane jumbotron" id="vars">
+                        <style>
+                            #template_vars dt { width: 300px; }
+                            #template_vars dd { margin-left: 320px; }
+                        </style>
+                        <dl class="dl-horizontal" id="template_vars">
+                            {% for template_var in template_vars %}
+                                <dt>{{ '{{' }} {{ template_var.name }} {{ '}}' }}</dt>
+                                <dd>{{ template_var.description }}</dd>
+                            {% endfor %}
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+
+        {{ csrf_input }}
+        <button type="submit" class="btn btn-success pull-right">
+            {% if object %}
+                {% trans %}Save{% endtrans %}
+            {% else %}
+                {% trans %}Add{% endtrans %}
+            {% endif %}
+            {% trans %}landing page{% endtrans %}
+        </button>
+    </form>
+
+    {# import url modal #}
+    <div class="modal fade" id="importUrl" tabindex="-1" role="dialog" aria-labelledby="importUrlLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="importUrlLabel">{% trans %}Import from URL{% endtrans %}</h4>
+                </div>
+
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="importUrlInput">{% trans %}URL to clone{% endtrans %}</label>
+                        <input id="importUrlInput" type="url" class="form-control"/>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" id="importUrlButton" class="btn btn-primary">{% trans %}Import{% endtrans %}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_script %}
+    <script src="//cdn.ckeditor.com/4.5.7/standard/ckeditor.js"></script>
+    <script type="text/javascript">
+        $(function() {
+            CKEDITOR.replace('id_html', {
+                fullPage: true,
+                allowedContent: true
+            });
+        });
+
+        {# import url modal binding #}
+        var modal = $('#importUrl');
+        var importUrlButton = $('#importUrlButton');
+        var importUrlInput = $('#importUrlInput');
+
+        modal.on('shown.bs.modal', function () {
+            importUrlInput.focus();
+        });
+
+        importUrlButton.click(function () {
+            var data = {
+                url: importUrlInput.val(),
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+            };
+
+            $.post('{{ url('landing_page_clone_url') }}', data, function(result) {
+                CKEDITOR.instances.id_html.setData(result);
+                modal.modal('hide');
+            });
+        });
+
+        importUrlInput.keyup(function(e) {
+            if(e.keyCode == 13) importUrlButton.click();
+        });
+    </script>
+{% endblock %}

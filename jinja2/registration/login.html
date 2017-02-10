@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}{% trans %}Login{% endtrans %}{% endblock %}
+
+{% block content %}
+    {% if form.errors %}
+        <p>{% trans %}Your username and password didn't match. Please try again.{% endtrans %}</p>
+    {% endif %}
+
+    <form method="post" action="{{ url('login') }}">
+        {{ form|bootstrap }}
+        {{ csrf_input }}
+        <input type="submit" class="btn btn-success" value="{% trans %}Login{% endtrans %}" />
+    </form>
+
+    <a href="{{ url('password_reset') }}" class="btn btn-default pull-right">{% trans %}Lost password?{% endtrans %}</a>
+{% endblock %}
+
+{% block extra_script %}
+    <script type="text/javascript">document.getElementById("id_username").focus();</script>
+{% endblock %}

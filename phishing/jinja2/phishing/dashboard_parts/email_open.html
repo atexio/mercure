@@ -1,0 +1,7 @@
+{% if graphs.email_open_pie %}
+    <div class="col-md-3">
+        <h3>{% trans %}Emails open{% endtrans %}</h3>
+        <canvas id="email_open_pie"></canvas>
+        <p><b>{% trans %}Total opened{% endtrans %}:</b> {{ graphs.email_open_opened_tracker_count or 0 }}</p>
+    </div>
+{% endif %}

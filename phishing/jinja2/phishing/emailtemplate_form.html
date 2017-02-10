@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {% if object %}
+        {% trans %}Edit{% endtrans %}
+    {% else %}
+        {% trans %}Add new{% endtrans %}
+    {% endif %}
+    {% trans %}email template{% endtrans %}
+{% endblock %}
+
+{% block content %}
+    <form method="post">
+        {% for field in global_form %}
+            {{ field|bootstrap }}
+        {% endfor %}
+
+        {% if templates_actions %}
+            <fieldset>
+                <legend>{% trans %}Actions{% endtrans %}</legend>
+                {% for template_actions in templates_actions %}
+                    {% include template_actions %}
+                {% endfor %}
+            </fieldset><br />
+        {% endif %}
+
+        <fieldset>
+            <legend>{% trans %}Content{% endtrans %}</legend>
+            <div>
+                <ul class="nav nav-tabs" role="tablist">
+                    {% for field in textarea_form %}
+                        <li role="presentation"{% if loop.first %} class="active"{% endif %}>
+                            <a href="#{{ field.html_name }}" aria-controls="{{ field.html_name }}" role="tab" data-toggle="tab">{{ field.label }}</a>
+                        </li>
+                    {% endfor %}
+                    <li role="presentation">
+                        <a href="#vars" aria-controls="vars" role="tab" data-toggle="tab">{% trans %}Variables{% endtrans %}</a>
+                    </li>
+                </ul>
+
+                <div class="tab-content">
+                    {% for field in textarea_form %}
+                        <div role="tabpanel" class="tab-pane{% if loop.first %} active{% endif %}" id="{{ field.html_name }}">
+                            {{ field|bootstrap }}
+                        </div>
+                    {% endfor %}
+
+                    <div role="tabpanel" class="tab-pane jumbotron" id="vars">
+                        <style>
+                            #template_vars dt { width: 300px; }
+                            #template_vars dd { margin-left: 320px; }
+                        </style>
+                        <dl class="dl-horizontal" id="template_vars">
+                            {% for template_var in template_vars %}
+                                <dt>{{ '{{' }} {{ template_var.name }} {{ '}}' }}</dt>
+                                <dd>{{ template_var.description }}</dd>
+                            {% endfor %}
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+
+        {{ csrf_input }}
+        <button type="submit" class="btn btn-success pull-right">
+            {% if object %}
+                {% trans %}Save{% endtrans %}
+            {% else %}
+                {% trans %}Add{% endtrans %}
+            {% endif %}
+            {% trans %}email template{% endtrans %}
+        </button>
+    </form>
+{% endblock %}
+
+{% block extra_script %}
+    <script src="//cdn.ckeditor.com/4.5.7/standard/ckeditor.js"></script>
+    <script type="text/javascript">
+        $(function() {
+            CKEDITOR.replace('id_html_content', {
+                fullPage: true,
+                allowedContent: true
+            });
+        });
+        {% if buttons_actions %}
+            $('#actionModal').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget);
+                var url = button.data('url');
+                var modal = $(this);
+                modal.find('.modal-title').text(button.text());
+                modal.find('.modal-body').html('{% trans %}Loading ...{% endtrans %}');
+                $.get( url, function(data) {
+                      modal.find('.modal-body').html(data);
+                });
+            });
+        {% endif %}
+    </script>
+{% endblock %}

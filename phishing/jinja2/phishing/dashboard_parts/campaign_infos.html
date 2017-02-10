@@ -1,0 +1,65 @@
+<h3>Campaign infos</h3>
+<table class="table table-hover">
+    <tbody>
+        <tr>
+            <th>{% trans %}Name{% endtrans %}</th>
+            <td>{{ campaign.name|fupper }}</td>
+        </tr>
+
+        <tr>
+            <th>{% trans %}Lanching date{% endtrans %}</th>
+            <td>{{ campaign.created_at }}</td>
+        </tr>
+
+        <tr>
+            <th>{% trans %}Email template{% endtrans %}</th>
+            <td>
+                {{ campaign.email_template|fupper }}
+
+                {% if request.user.has_perm('phishing.change_emailtemplate') %}
+                    <a class="pull-right btn btn-default btn-xs" href="{{ url('email_template_edit', args=(campaign.email_template.pk,)) }}" role="button">
+                        <span class="glyphicon glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                    </a>
+                {% endif %}
+            </td>
+        </tr>
+
+        <tr>
+            <th>{% trans %}Target groups{% endtrans %}</th>
+            <td>
+                <ul class="list-group">
+                    {% for target_group in campaign.target_groups.all() %}
+                        <li class="list-group-item">
+                            {{ target_group|fupper }}
+
+                            {% if request.user.has_perm('phishing.change_targetgroup') %}
+                                <a class="pull-right btn btn-default btn-xs" href="{{ url('target_group_edit', args=(target_group.pk,)) }}" role="button">
+                                    <span class="glyphicon glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                                </a>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </td>
+        </tr>
+
+        {% if campaign.smtp_host %}
+            <tr>
+                <th>{% trans %}SMTP host{% endtrans %}</th>
+                <td>{{ campaign.smtp_host }}</td>
+            </tr>
+
+            <tr>
+                <th>{% trans %}SMTP username{% endtrans %}</th>
+                <td>{{ campaign.smtp_username }}</td>
+            </tr>
+
+            {% if request.user.is_superuser %}
+                <tr>
+                    <th>{% trans %}SMTP password{% endtrans %}</th>
+                    <td style="color: transparent;text-shadow: 0 0 15px #000;">{{ campaign.smtp_password }}</td>
+                </tr>
+            {% endif %}
+        {% endif %}
+    </tbody>
+</table>

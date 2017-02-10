@@ -1,0 +1,49 @@
+<table class="table table-hover">
+    <thead>
+        {% for target in targets_details.values() %}
+            {% if loop.first %}
+                <tr>
+                    {% for value in target %}
+                        <th>{{ value|fupper }}</th>
+                    {% endfor %}
+
+                     <th></th>
+                </tr>
+            {% endif %}
+        {% endfor %}
+    </thead>
+
+    <tbody>
+        {% for target_id, target in targets_details.items() %}
+            <tr onclick="target_infos({{ target_id }})" style="cursor: pointer">
+                {% for value in target.values() %}
+                    {% if value.value %}
+                        <td><abbr title="{{ value.updated_at }}">{{ value.value|fupper }}{% if value.infos %} ({{ value.infos|fupper }}){% endif %}</abbr></td>
+                    {% else %}
+                        <td>{{ value }}</td>
+                    {% endif %}
+                {% endfor %}
+
+                <td>
+                    <a class="btn btn-info pull-right" role="button">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </a>
+                </td>
+            </tr>
+
+            <tr id="target_{{ target_id }}_detail" style="display: none">
+                <td colspan="{{ target.values()|length + 1 }}">
+                    <canvas id="target_{{ target_id }}_histogram" height="50"></canvas>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script>
+    function target_infos(target_id) {
+        $('#target_' + target_id + '_detail').toggle();
+        init_graph('target_' + target_id + '_histogram');
+        return true;
+    }
+</script>

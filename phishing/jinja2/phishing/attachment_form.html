@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {% if object %}
+        {% trans %}Edit{% endtrans %}
+    {% else %}
+        {% trans %}Add new{% endtrans %}
+    {% endif %}
+    {% trans %}attachment{% endtrans %}
+{% endblock %}
+
+{% block content %}
+    <form method="post" enctype="multipart/form-data">
+        {% for field in form %}
+            {% if not field.name == 'buildable'  %}
+                {{ field|bootstrap }}
+            {% else %}
+                    <b>{{ field.name|capitalize }}</b>
+                    <a href="#" data-placement="bottom" data-toggle="tooltip" data-html="true"
+                       title=" {% trans %} Check 'buildable' if you need to compute a file.<br/>
+                                To execute the build easily, you need to create a zip archive
+                                which contain a build script (named 'generator.sh' and a buildable file{% endtrans %}">
+                          <span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>
+                    </a>
+                    {{ field|bootstrap }}
+            {% endif %}
+        {% endfor %}
+        {{ csrf_input }}
+        <button type="submit" class="btn btn-success pull-right">
+            {% if object %}
+                {% trans %}Save{% endtrans %}
+            {% else %}
+                {% trans %}Add{% endtrans %}
+            {% endif %}
+            {% trans %}attachment{% endtrans %}
+        </button>
+    </form>
+{% endblock %}
+
+
+
+{% block extra_script %}
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
+{% endblock %}

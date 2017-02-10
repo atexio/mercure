@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+
+{% block title %}{% trans %}Goodbye{% endtrans %}{% endblock %}
+
+{% block content %}
+    <p>{% trans %}You have been logged out.{% endtrans %}</p>
+    <p><a href="{{ url('login') }}">{% trans %}Log in again{% endtrans %}</a></p>
+{% endblock %}

@@ -1,0 +1,11 @@
+[
+  	{
+		"model": "phishing.landingpage",
+		"pk": 1,
+		"fields": {
+			"name": "Landing test",
+			"domain": "",
+			"html": "<html>\r\n<head>\r\n\t<title></title>\r\n</head>\r\n<body>\r\n<p>Woh such good page</p>\r\n</body>\r\n</html>"
+		}
+	}
+]

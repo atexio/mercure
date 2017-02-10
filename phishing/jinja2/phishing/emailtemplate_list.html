@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %}{% trans %}Email template{% endtrans %}{% endblock %}
+
+{% block content %}
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>{% trans %}Email template name{% endtrans %}</th>
+                <th>{% trans %}Email subject{% endtrans %}</th>
+                <th>
+                    {% if request.user.has_perm('phishing.add_emailtemplate') %}
+                        <a class="btn btn-success pull-right" href="{{ url('email_template_add') }}" role="button" data-toggle="modal">
+                            <span class="glyphicon glyphicon-file"></span>
+                            {% trans %}New email template{% endtrans %}
+                        </a>
+                    {% endif %}
+                </th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for object in object_list %}
+                <tr id="emailtemplate_{{ object.pk }}"
+                    {% if request.user.has_perm('phishing.change_emailtemplate') %}
+                        onclick="document.location = '{{ url('email_template_edit', args=(object.pk,)) }}'" style="cursor: pointer"
+                    {% endif %}
+                >
+                    <td>{{ object }}</td>
+                    <td>{{ object.email_subject }}</td>
+                    <td>
+                        <div class="btn-group pull-right">
+                            {% if request.user.has_perm('phishing.change_emailtemplate') %}
+                                <a class="btn btn-default" id="edit_emailtemplate_{{ object.pk }}"
+                                   href="{{ url('email_template_edit', args=(object.pk,)) }}" role="button">
+                                    <span class="glyphicon glyphicon-pencil"></span>
+                                    {% trans %}Edit{% endtrans %}
+                                </a>
+                            {% endif %}
+
+                            {% if request.user.has_perm('phishing.add_emailtemplate') %}
+                                <a class="btn btn-warning"
+                                   href="{{ url('email_template_clone', args=(object.pk,)) }}"
+                                   role="button" id="clone_emailtemplate_{{ object.pk }}"
+                                   title="{% trans %}Clone{% endtrans %}">
+                                    <span class="glyphicon glyphicon-duplicate"></span>
+                                </a>
+                            {% endif %}
+
+                            {% if request.user.has_perm('phishing.delete_emailtemplate') %}
+                                <a class="btn btn-danger deletebtn"
+                                   role="button" id="delete_emailtemplate_{{ object.pk }}"
+                                   href="{{ url('email_template_delete', args=(object.pk,)) }}"
+                                   title="{% trans %}Remove{% endtrans %}">
+                                    <span class="glyphicon glyphicon-trash"></span>
+                                </a>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

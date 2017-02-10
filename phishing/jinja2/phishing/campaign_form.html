@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}{% trans %}Start campaign{% endtrans %}{% endblock %}
+
+{% block content %}
+    <form method="post">
+        {% for field in form %}
+            {% if field.field.required %}
+                {{ field|bootstrap }}
+            {% endif %}
+        {% endfor %}
+
+        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+            <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="headingOne">
+                    <h4 class="panel-title">
+                        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            <span class="glyphicon glyphicon-cog" aria-hidden="true"> {% trans %}Options{% endtrans %}</span>
+                        </a>
+                    </h4>
+                </div>
+
+                <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                    <div class="panel-body">
+                        {% for field in form %}
+                            {% if not field.field.required %}
+                                {{ field|bootstrap }}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{ csrf_input }}
+        <button type="submit" class="btn btn-success pull-right">{% trans %}Start campaign{% endtrans %}</button>
+    </form>
+{% endblock %}

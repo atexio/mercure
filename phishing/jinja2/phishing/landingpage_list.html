@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}{% trans %}Landing page{% endtrans %}{% endblock %}
+
+{% block content %}
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>{% trans %}Landing page name{% endtrans %}</th>
+                <th><a class="btn btn-success pull-right" href="{{ url('landing_page_add') }}" role="button" data-toggle="modal">
+                    <span class="glyphicon glyphicon-file"></span>
+                    {% trans %}New landing page{% endtrans %}</a>
+                </th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for object in object_list %}
+                <tr id="landingpage_{{ object.pk }}"
+                    onclick="document.location = '{{ url('landing_page_edit', args=(object.pk,)) }}'" style="cursor: pointer">
+                    <th>{{ object }}</th>
+                    <th>
+                        <div class="btn-group pull-right">
+                            <a class="btn btn-default" id="edit_landingpage_{{ object.pk }}"
+                               href="{{ url('landing_page_edit', args=(object.pk,)) }}" role="button">
+                                <span class="glyphicon glyphicon-pencil"></span>
+                                {% trans %}Edit{% endtrans %}
+                            </a>
+                            <a class="btn btn-danger deletebtn" id="delete_landingpage_{{ object.pk }}"
+                               href="{{ url('landing_page_delete', args=(object.pk,)) }}" role="button" title="{% trans %}Remove{% endtrans %}">
+                                <span class="glyphicon glyphicon-trash"></span>
+                            </a>
+                        </div>
+                    </th>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

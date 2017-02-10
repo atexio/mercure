@@ -1,0 +1,12 @@
+{% block title %}{% trans %}Confirm delete ?{% endtrans %}{% endblock %}
+
+{% block content %}
+    <div class="alert alert-warning" role="alert">
+        <form action="" method="post">
+            {{ csrf_input }}
+            <p>{% trans %}Are you sure you want to delete{% endtrans %} "{{ object }}"?</p>
+            <button type="submit" class="btn btn-danger">{% trans %}Delete{% endtrans %}</button>
+            <a href="{{ url(cancel_url_name) }}" class="btn btn-success pull-right" role="button">{% trans %}Cancel{% endtrans %}</a>
+        </form>
+    </div>
+{% endblock %}
