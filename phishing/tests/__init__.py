@@ -2,7 +2,7 @@ from .attachments import AttachmentTestCase
 from .campaign import CampaignTestCase
 from .landing_page import LandingPageTestCase
 from .scenario import ScenarioTestCase
-# from .selenium import SeleniumTestCase
+from .selenium import SeleniumTestCase
 from .signal import CampaignSignalTestCase, EmailTemplateSignalTestCase, \
     LandingPageSignalTestCase, MenuSignalTestCase, ReportSignalTestCase, \
     TargetActionSignalTestCase
