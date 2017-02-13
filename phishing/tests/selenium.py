@@ -21,9 +21,18 @@ class SeleniumTestCase(StaticLiveServerTestCase):
 
     def setUp(self):
         # We use a remote Chrome
+        username = os.environ.get('SAUCE_USERNAME')
+        accesskey = os.environ.get('SAUCE_ACCESS_KEY')
+        desired_cap = {
+            'platform': "Mac OS X 10.9",
+            'browserName': "chrome",
+            'version': "31",
+            'tunnel-identifier': os.environ.get('TRAVIS_JOB_NUMBER')
+        }
         self.drv = webdriver.Remote(
-            command_executor='http://127.0.0.1:4444/wd/hub',
-            desired_capabilities=webdriver.DesiredCapabilities.CHROME,
+            command_executor='http://%s:%s@ondemand.saucelabs.com/wd/hub'
+                             % (username, accesskey),
+            desired_capabilities=desired_cap,
         )
         super(SeleniumTestCase, self).setUp()
 
