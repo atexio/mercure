@@ -1,5 +1,4 @@
 # Basics
-setuptools==34.1.1
 django==1.10.5
 djangorestframework==3.5.4
 
