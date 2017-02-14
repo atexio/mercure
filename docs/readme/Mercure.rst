@@ -27,8 +27,8 @@ What Mercure will do:
 -  Browser plugins check
 -  User training
 
-.. |Build Status| image:: https://drone.synhack.fr/api/badges/synhack/mercure/status.svg
-   :target: https://drone.synhack.fr/synhack/mercure
+.. |Build Status| image:: https://travis-ci.org/synhack/mercure.svg?branch=master
+   :target: https://travis-ci.org/synhack/mercure
 .. |Coverage Status| image:: https://coveralls.io/repos/github/synhack/mercure/badge.svg?branch=master
    :target: https://coveralls.io/github/synhack/mercure?branch=master
 .. |Documentation Status| image:: https://readthedocs.org/projects/mercure/badge/?version=latest

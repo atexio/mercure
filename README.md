@@ -1,4 +1,5 @@
-#Mercure
+# Mercure
+
 [![Build Status](https://travis-ci.org/synhack/mercure.svg?branch=master)](https://travis-ci.org/synhack/mercure)
 [![Coverage Status](https://coveralls.io/repos/github/synhack/mercure/badge.svg?branch=master)](https://coveralls.io/github/synhack/mercure?branch=master)
 [![Documentation Status](https://readthedocs.org/projects/mercure/badge/?version=latest)](http://mercure.readthedocs.io/en/latest/?badge=latest)
@@ -7,7 +8,9 @@
 
 Mercure is a tool for security managers who want to train their collaborators to phishing.
 
-##What Mercure do:
+
+## What Mercure do:
+
 * Email template creation
 * Target list creation
 * Landing page creation
@@ -16,7 +19,9 @@ Mercure is a tool for security managers who want to train their collaborators to
 * Trackers on email reads, landing page opening, attachment execution
 * Credentials harvester
 
-##What Mercure will do:
+
+## What Mercure will do:
+
 * Display more graphs (we like graphs!)
 * Rest API
 * Multi message campaign (aka scenario)
@@ -24,10 +29,10 @@ Mercure is a tool for security managers who want to train their collaborators to
 * User training
 
 
-
 # Docker Quickstart
 
 ## Requirements
+
 * docker
 
 ## Available configuration
@@ -67,13 +72,13 @@ docker exec -it mercure python manage.py createsuperuser
 ```
 
 
-#Git Quickstart
-
+# Git Quickstart
 
 ## Requirements
 
 * python3
 * pip
+
 
 ## Deployment
 
@@ -88,7 +93,7 @@ pip install -r requirements.txt
 ```
 
 
-#How to use mercure
+# How to use mercure
 
 We can consider mercure is divide between 4 categories :
 * Targets
@@ -144,9 +149,9 @@ Targets, Email Templates and Campaign are the minimum required to run a basic ph
 
 
 
-#Developpers
+# Developpers
 
-##To participate to the project :
+## To participate to the project :
 
 1. Fork the project
 
@@ -163,13 +168,15 @@ Targets, Email Templates and Campaign are the minimum required to run a basic ph
 5. Perform a pull request
 
 
-#Responsible Disclosure of Security Vulnerabilities
+# Responsible Disclosure of Security Vulnerabilities
 
 We want to keep Mercure safe for everyone. If you've discovered a security vulnerability in Mercure, we appreciate your help in disclosing it to us in a responsible manner.
 
 Send an email to 'security@synhack.fr'. If you want, you can use with [PGP Key](https://pgp.mit.edu/pks/lookup?op=vindex&search=security@synhack.fr)
 
+
 ## Vulnerability summary
+
 * Name of the vulnerability
 * Attack Vector (AV)
 * Attack Complexity (AC)
@@ -180,10 +187,12 @@ Send an email to 'security@synhack.fr'. If you want, you can use with [PGP Key](
 * Integrity (I)
 * Availability (A)
 
+
 ## Reporter informations
 * Your Name
 * Your Mail
 * Your PGP public key
+
 
 ## Technical details
 * More technical details. 
