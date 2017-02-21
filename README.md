@@ -6,28 +6,27 @@
 [![Code Health](https://landscape.io/github/synhack/mercure/master/landscape.svg?style=flat)](https://landscape.io/github/synhack/mercure/master)
 [![Requirements Status](https://requires.io/github/synhack/mercure/requirements.svg?branch=master)](https://requires.io/github/synhack/mercure/requirements/?branch=master)
 
-Mercure is a tool for security managers who want to train their collaborators to phishing.
+Mercure is a tool for security managers who want to teach their collaborators about phishing.
 
 
-## What Mercure do:
+## What Mercure can do:
 
-* Email template creation
-* Target list creation
-* Landing page creation
-* Attachment handling
-* Campaign dashboard
-* Trackers on email reads, landing page opening, attachment execution
-* Credentials harvester
+* Create email templates
+* Create target lists
+* Create landing pages
+* Handle attachments
+* Let you keep track in the Campaign dashboard
+* Track email reads, landing page visits and attachment execution.
+* Harvest credentials
 
 
 ## What Mercure will do:
 
 * Display more graphs (we like graphs!)
-* Rest API
-* Multi message campaign (aka scenario)
-* Browser plugins check
+* Provide a REST API
+* Allow for multi-message campaigns (aka scenarios)
+* Check browser plugins
 * User training
-
 
 # Docker Quickstart
 
