@@ -149,7 +149,7 @@ Targets, Email Templates and Campaign are the minimum required to run a basic ph
 
 
 
-# Developpers
+# Developers
 
 ## To participate to the project :
 
