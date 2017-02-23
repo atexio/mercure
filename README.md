@@ -6,7 +6,7 @@
 [![Code Health](https://landscape.io/github/synhack/mercure/master/landscape.svg?style=flat)](https://landscape.io/github/synhack/mercure/master)
 [![Requirements Status](https://requires.io/github/synhack/mercure/requirements.svg?branch=master)](https://requires.io/github/synhack/mercure/requirements/?branch=master)
 
-Mercure is a tool for security managers who want to teach their collaborators about phishing.
+Mercure is a tool for security managers who want to teach their colleagues about phishing.
 
 
 ## What Mercure can do:
