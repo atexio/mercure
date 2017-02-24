@@ -36,7 +36,9 @@ urlpatterns = i18n_patterns(
 
 
 # serve static files (for prod docker) ?
-if 'DONT_SERVES_STATIC_FILE' in os.environ:
+DONT_SERVES_STATIC_FILE = os.environ.get('DONT_SERVES_STATIC_FILE', 'False') \
+    .lower() in ['true', '1', 't', 'y', 'yes']
+if not DONT_SERVES_STATIC_FILE:
     urlpatterns += url(
         r'^%s(?P<path>.*)$' % re.escape(settings.STATIC_URL.lstrip('/')),
         csrf_exempt(serve), kwargs={'document_root': settings.STATIC_ROOT}
