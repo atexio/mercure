@@ -13,7 +13,6 @@ basic phishing campaign.
    :alt: Targets
 
    Targets
-
 You need to fill mercure name, the target email.Target first and last
 name are optional, but can be usefull to the landing page
 
@@ -23,7 +22,6 @@ name are optional, but can be usefull to the landing page
    :alt: Landing page
 
    Landing page
-
 You need to fill the mercure name, the subject, the send and the email
 content. To improve the email quality, you have to fill the email
 content HTML and the text content. To get information about opened
@@ -38,7 +36,6 @@ Attachments and landing page are optionnal, we will see it after.
    :alt: Campaign
 
    Campaign
-
 You need to fill the mercure name, select the email template and the
 target group. You can select the SMTP credentials, SSL using or URL
 minimazing
@@ -49,7 +46,6 @@ minimazing
    :alt: Landing page
 
    Landing page
-
 You need to fill the mercure name, the domain to use You can use "Import
 from URL" to copy an existing website.
 
@@ -62,7 +58,6 @@ to "Source"
    :alt: Attachments
 
    Attachments
-
 You need to fill the mercure name, the file name which appears in the
 email and the file You also have to check if the the file is buildable
 or not, if you need to compute a file for example.

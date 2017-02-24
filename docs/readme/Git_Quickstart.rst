@@ -19,3 +19,4 @@ Deployment
     ./manage.py collectstatic
     ./manage.py createsuperuser
     ./manage.py runserver
+

@@ -48,7 +48,7 @@ Mercure is a tool for security managers who want to teach their colleagues about
 | SENTRY_DSN                | Optional | Send debug info to sentry.io                | https://23xxx:38xxx@sentry.io/1234 |
 | AXES_LOCK_OUT_AT_FAILURE  | Optional | Ban on forcebrute login                     | True                               |
 | AXES_COOLOFF_TIME         | Optional | Ban duration on forcebrute login (in hours) | 0.8333                             |
-| DONT_SERVES_STATIC_FILE   | Optional | Django no not serve static files            | True                               |
+| DONT_SERVES_STATIC_FILE   | Optional | Don't serve static files with django        | True                               |
 
 
 ## Sample deployment
