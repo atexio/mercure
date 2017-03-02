@@ -31,5 +31,5 @@ selenium==3.0.2
 
 # Documentation
 sphinx==1.5.3
-sphinx_rtd_theme==0.1.9
+sphinx-rtd-theme==0.2.0
 pypandoc==1.3.3
