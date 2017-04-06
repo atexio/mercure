@@ -1,5 +1,5 @@
 # Basics
-django==1.10.6
+django==1.10.7
 djangorestframework==3.6.2
 
 # Templates
@@ -15,7 +15,7 @@ django-axes==2.3.2
 # Data parsing
 beautifulsoup4==4.5.3
 html5lib==1.0b10
-cchardet==1.1.3
+cchardet==2.0.0
 
 # Networking
 requests==2.13.0
@@ -30,6 +30,6 @@ unipath==1.1
 selenium==3.3.3
 
 # Documentation
-sphinx==1.5.4
+sphinx==1.5.5
 sphinx-rtd-theme==0.2.4
 pypandoc==1.3.3
