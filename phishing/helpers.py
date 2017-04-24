@@ -150,7 +150,7 @@ def get_smtp_connection(campaign):
     return EmailBackend(**options)
 
 
-def intercept_html_post(html, redirect_url=None, is_secure=False):
+def intercept_html_post(html, redirect_url=None):
     """Edit form to intercept posted data
 
     :param html: html page code
@@ -178,11 +178,12 @@ def intercept_html_post(html, redirect_url=None, is_secure=False):
                 action = hostname_url + action
 
         # add action url in input hidden
-        form['action'] = 'http%s://%s%s' % (
-            's' if is_secure else '',
-            POST_DOMAIN,
-            reverse('landing_page_post', args=[POST_TRACKER_ID]),
-        )
+        if 'action' not in form or POST_DOMAIN not in form['action']:
+            form['action'] = 'http%s://%s%s' % (
+                's' if HOSTNAME.startswith('https') else '',
+                POST_DOMAIN,
+                reverse('landing_page_post', args=[POST_TRACKER_ID]),
+            )
 
         # add real action url
         if not form.find('input', {'name': 'mercure_real_action_url'}):
