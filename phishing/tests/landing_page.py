@@ -276,7 +276,7 @@ class LandingPageTestCase(TestCase):
                  'f4602caa972ce52dfd67fb92053f7563/raw/' \
                  '82d276da''9ba439f30ed466dbec0619eb74d2e3f8/form4.php'
 
-        url_action = 'https://%s%s' % (
+        url_action = 'http://%s%s' % (
             POST_DOMAIN,
             reverse('landing_page_post', args=[POST_TRACKER_ID]),
         )
@@ -300,7 +300,7 @@ class LandingPageTestCase(TestCase):
                  '5ea58bf2984fb1c81512025e35c706fb/raw/' \
                  '4c5486eaaebfb2d3871f5edaf57bbfe7e0bef45e/form3.php'
 
-        url_action = 'https://%s%s' % (
+        url_action = 'http://%s%s' % (
             POST_DOMAIN,
             reverse('landing_page_post', args=[POST_TRACKER_ID]),
         )
@@ -324,7 +324,7 @@ class LandingPageTestCase(TestCase):
                  'd4004343ce0b9406f77e5ccdb63b355a/raw/' \
                  '17b7c8732614fc410b27f5d3f89b456df9ca0b40/form2.php'
 
-        url_action = 'https://%s%s' % (
+        url_action = 'http://%s%s' % (
             POST_DOMAIN,
             reverse('landing_page_post', args=[POST_TRACKER_ID]),
         )
@@ -545,20 +545,14 @@ class LandingPageTestCase(TestCase):
         with open(path) as f:
             need_html = _clean_html(f.read())
 
-        need_html_no_https = need_html.replace(
-            'https://post-domain-5sd15qsdqs5q',
-            'http://post-domain-5sd15qsdqs5q'
-        )
-
         # test helper
-        html_result = intercept_html_post(source_html, source_url, True)
+        html_result = intercept_html_post(source_html, source_url)
         self.assertEqual(_clean_html(html_result), need_html)
-        html_result = intercept_html_post(source_html, source_url, False)
-        self.assertEqual(_clean_html(html_result), need_html_no_https)
+
 
         # imbriqued helper (edit on fist call only)
-        html_result = intercept_html_post(source_html, source_url, True)
-        html_result = intercept_html_post(html_result, source_url, True)
+        html_result = intercept_html_post(source_html, source_url)
+        html_result = intercept_html_post(html_result, source_url)
         self.assertEqual(_clean_html(html_result), need_html)
 
         # test signal
@@ -566,7 +560,7 @@ class LandingPageTestCase(TestCase):
             name='Test intercept html post signal',
             html=source_html
         )
-        need = need_html_no_https \
+        need = need_html \
             .replace('/page', '') \
             .replace('https://sub.example.com', 'https://www.google.com')
         self.assertEqual(_clean_html(landing_page.html), need)
