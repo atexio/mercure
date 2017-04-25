@@ -1,5 +1,7 @@
 FROM python:3-onbuild
 
+# To handle buildable attachments
+RUN apt-get update && apt-get install -y zip unzip
 
 # prepare django
 RUN python manage.py makemigrations
