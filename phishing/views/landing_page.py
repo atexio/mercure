@@ -30,7 +30,7 @@ def clone(request):
     html = clone_url(url)
 
     # add intercept post data
-    html = intercept_html_post(html, url, request.is_secure)
+    html = intercept_html_post(html, url)
 
     return HttpResponse(html)
 
