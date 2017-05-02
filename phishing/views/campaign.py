@@ -1,5 +1,6 @@
-from collections import OrderedDict
+import re
 
+from collections import OrderedDict
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, \
     PermissionRequiredMixin
@@ -95,7 +96,7 @@ def dashboard(request, pk):
             graphs[graph_name][value] += 1
 
     def clean_name(name):
-        return name.replace(' ', '_').replace('(', '').replace(')', '')
+        return re.sub('[^0-9a-zA-Z]+', '_', name)
 
     # generate tracker graph
     for tracker in Tracker.objects.filter(campaign_id=pk) \
