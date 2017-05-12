@@ -13,7 +13,7 @@ raven==6.0.0
 django-axes==2.3.2
 
 # Data parsing
-beautifulsoup4==4.5.3
+beautifulsoup4==4.6.0
 html5lib==1.0b10
 cchardet==2.0.1
 
