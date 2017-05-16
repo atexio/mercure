@@ -1,6 +1,6 @@
 # Basics
 django==1.10.7
-djangorestframework==3.6.2
+djangorestframework==3.6.3
 
 # Templates
 django-bootstrap-form==3.2.1
@@ -13,12 +13,12 @@ raven==6.0.0
 django-axes==2.3.2
 
 # Data parsing
-beautifulsoup4==4.5.3
+beautifulsoup4==4.6.0
 html5lib==1.0b10
-cchardet==2.0.1
+cchardet==2.1.0
 
 # Networking
-requests==2.13.0
+requests==2.14.2
 
 # Utils
 django-model-utils==3.0.0
@@ -30,6 +30,6 @@ unipath==1.1
 selenium==3.4.1
 
 # Documentation
-sphinx==1.5.5
+sphinx==1.6.1
 sphinx-rtd-theme==0.2.4
 pypandoc==1.4
