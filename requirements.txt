@@ -27,7 +27,7 @@ pytz==2017.2
 unipath==1.1
 
 # Testing
-selenium==3.4.1
+selenium==3.4.2
 
 # Documentation
 sphinx==1.6.1
