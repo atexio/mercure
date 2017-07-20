@@ -10,7 +10,7 @@ jinja2==2.9.6
 raven==6.1.0
 
 # Security
-django-axes==2.3.2
+django-axes==2.3.3
 
 # Data parsing
 beautifulsoup4==4.6.0
