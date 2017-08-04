@@ -3,7 +3,7 @@ django==1.10.7
 djangorestframework==3.6.3
 
 # Templates
-django-bootstrap-form==3.2.1
+django-bootstrap-form==3.3
 jinja2==2.9.6
 
 # Debugging
