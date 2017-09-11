@@ -18,5 +18,3 @@ To participate to the project :
        python manage.py test
 
 5. Perform a pull request
-
-
