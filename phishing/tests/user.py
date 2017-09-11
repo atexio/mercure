@@ -1,13 +1,9 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Permission
 from django.core.urlresolvers import reverse
-from django.test.utils import setup_test_environment
 from django.test import TestCase
 
 from phishing.models import Campaign, EmailTemplate
-
-
-setup_test_environment()
 
 
 class PermissionTestCase(TestCase):
