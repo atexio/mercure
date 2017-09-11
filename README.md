@@ -82,7 +82,7 @@ docker exec -it mercure python manage.py createsuperuser
 ## Deployment
 
 ```
-git clone git@bitbucket.org:synhack/mercure.git && cd mercure
+git clone git@github.com:synhack/mercure.git && cd mercure
 pip install -r requirements.txt
 ./manage.py makemigrations
 ./manage.py migrate

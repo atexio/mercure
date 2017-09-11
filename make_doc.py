@@ -1,5 +1,6 @@
 import os
 import pypandoc
+import shutil
 
 
 CURRENT_PATH = os.path.dirname(os.path.abspath(__file__))
@@ -29,6 +30,8 @@ def save_part(lines):
 
 
 # create directory
+if os.path.exists(README_DOC_PATH):
+    shutil.rmtree(README_DOC_PATH)
 if not os.path.exists(README_DOC_PATH):
     os.mkdir(README_DOC_PATH)
 
