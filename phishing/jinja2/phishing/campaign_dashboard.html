@@ -49,8 +49,8 @@
         };
         var colors_list = [
             //Light1
-            "#EC7553",
             "#3A7696",
+            "#EC7553",
             "#ECA653",
             "#3BA76D",
             //Basic
@@ -182,15 +182,25 @@
         }
 
         function load_pie(canvas, values) {
+            var labels = [];
+            var data = [];
+            var pie_color = [];
+
+            Object.keys(values).map(function (key) {
+                labels.push(key);
+                data.push(values[key]['value']);
+
+                if (values[key]['color'])
+                    pie_color.push(values[key]['color']);
+            });
+
             var data = {
-                labels: Object.keys(values),
+                labels: labels,
                 datasets: [
                     {
-                        data: Object.keys(values).map(function (key) {
-                            return values[key];
-                        }),
-                        backgroundColor: colors_list,
-                        hoverBackgroundColor: colors_list
+                        data: data,
+                        backgroundColor: pie_color ? pie_color : colors_list,
+                        hoverBackgroundColor: pie_color ? pie_color : colors_list,
                     }
                 ]
             };
