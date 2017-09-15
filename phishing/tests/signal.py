@@ -100,9 +100,9 @@ class EmailTemplateSignalTestCase(TestCase, SearchListMixin):
         var_data = self.get('email')
         self.assertIsNone(var_data)
 
-        # test replace
+        # test render
         content = replace_template_vars('{{ email }}')
-        self.assertEqual(content, '{{ email }}')
+        self.assertEqual(content, '')
 
         # clean
         self.assertTrue(make_template_vars.disconnect(handler))

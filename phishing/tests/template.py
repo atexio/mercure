@@ -4,7 +4,8 @@ from datetime import datetime
 from django.test import TestCase
 from django.urls import reverse
 
-from phishing.helpers import minimize_url, get_template_vars
+from phishing.helpers import minimize_url, get_template_vars, \
+    replace_template_vars
 from phishing.models import Target, TargetGroup, EmailTemplate
 from phishing.tests.constant import FIXTURE_PATH
 
@@ -240,3 +241,21 @@ class TemplateTestCase(TestCase):
         self.assertEqual(resp.status_code, 200)
 
         # TODO: Test user that is not admin
+
+    def test_security_template(self):
+        # test render
+        content = replace_template_vars('{{ request }}')
+        print(content)
+        self.assertEqual(content, '')
+
+        # test render
+        content = replace_template_vars("{% include 'phishing/email/tracker_image.html' %}")
+        self.assertEqual(content, '')
+
+        # test load
+        content = replace_template_vars('{% load log %}{% get_admin_log 10 as admin_log %}{{ admin_log }}')
+        self.assertEqual(content, '')
+
+        # list load avalible
+        content = replace_template_vars('{% load fghdfhfghd %}')
+        self.assertEqual(content, '')
