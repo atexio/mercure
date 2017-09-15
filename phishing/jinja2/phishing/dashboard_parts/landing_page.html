@@ -6,6 +6,8 @@
             <p  title="{% trans %}This number is the sum of ALL the landingpage opened. One people can open one the landingpage several times{% endtrans %}">
                 <b>{% trans %}Total opened{% endtrans %}:</b> {{ graphs.landing_page_open_opened_tracker_count }}
             </p>
+        {% else %}
+            <b>{% trans %}Not opened{% endtrans %}</b>
         {% endif %}
     </div>
 {% endif %}
@@ -18,6 +20,8 @@
             <p  title="{% trans %}This number is the sum of ALL the post on the landingpage opened. One people can post multiple times on the landingpage.{% endtrans %}">
                 <b>{% trans %}Total posted{% endtrans %}:</b> {{ graphs.landing_page_post_yes_tracker_count }}
             </p>
+        {% else %}
+            <b>{% trans %}Not opened{% endtrans %}</b>
         {% endif %}
     </div>
 {% endif %}
