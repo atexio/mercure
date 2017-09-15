@@ -8,6 +8,8 @@ import requests
 from django.core.mail import EmailMultiAlternatives
 from django.core.mail.backends.smtp import EmailBackend
 from django.core.urlresolvers import reverse
+from django.template import Context
+from django.template import Template
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 from pyshorteners import Shortener
@@ -220,16 +222,12 @@ def replace_template_vars(template, campaign=None, target=None,
     :param email_template: `.models.EmailTemplate`
     :return: content with value
     """
+    vars_context={}
     for var in get_template_vars(campaign, target, email_template):
-        names = (
-            '{{%s}}' % var['name'],
-            '{{ %s }}' % var['name']
-        )
-        value = var['value'] or ''
-        for name in names:
-            template = template.replace(name, value)
+        vars_context[var['name']]=var['value']
 
-    return template
+    context = Context(vars_context)
+    return Template(template).render(context)
 
 
 def start_campaign(campaign):
