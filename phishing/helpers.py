@@ -222,11 +222,8 @@ def replace_template_vars(template, campaign=None, target=None,
     :param email_template: `.models.EmailTemplate`
     :return: content with value
     """
-    vars_context={}
-    for var in get_template_vars(campaign, target, email_template):
-        vars_context[var['name']]=var['value']
-
-    context = Context(vars_context)
+    vars = get_template_vars(campaign, target, email_template)
+    context = Context({v['name']: v['value'] for v in vars })
     return Template(template).render(context)
 
 
