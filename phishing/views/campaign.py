@@ -79,7 +79,7 @@ def dashboard(request, pk):
         # add value
         graphs[graph_name][value][to_hour_timestamp(datetime)] += 1
 
-    def add_pie_value(name, value):
+    def add_pie_value(name, value, fixed_color=''):
         """Add value to pie graph.
 
         :param name: graph name
@@ -91,28 +91,33 @@ def dashboard(request, pk):
             graphs[graph_name] = {}
 
         if value not in graphs[graph_name]:
-            graphs[graph_name][value] = 1
-        else:
-            graphs[graph_name][value] += 1
+            graphs[graph_name][value] = {
+                'value': 0,
+                'color': fixed_color,
+            }
+
+        graphs[graph_name][value]['value'] += 1
 
     def clean_name(name):
         return re.sub('[^0-9a-zA-Z]+', '_', name)
 
     # generate tracker graph
     for tracker in Tracker.objects.filter(campaign_id=pk) \
-            .order_by('-created_at'):
+            .order_by('created_at'):  # order column (in user details)
         # init targets details
         if tracker.target_id not in targets_details:
             targets_details[tracker.target_id] = OrderedDict({
                 'email': tracker.target.email,
             })
-
         # add values
         key = clean_name(tracker.key)
         targets_details[tracker.target_id][tracker.key] = tracker
         value = '%s (%s)' % (tracker.key, tracker.value)
+        unchanged_value = (
+              tracker.updated_at - tracker.created_at).total_seconds() < 1
+        pie_color_value = '#bdc3c7' if unchanged_value else '#e67e22'
 
-        add_pie_value(key, value)
+        add_pie_value(key, value, pie_color_value)
         add_histogram_value(key, tracker.updated_at, value)
 
         # can has trakerInfos entry ?
@@ -190,7 +195,7 @@ def dashboard(request, pk):
     # init graph layout
     tabs_layout = OrderedDict()
     tabs_layout['Global'] = ['global.html', 'email_open.html',
-                             'landing_page.html']
+                             'landing_page.html', 'attachment.html']
 
     # add target group graph
     if campaign.target_groups.count() > 1:
