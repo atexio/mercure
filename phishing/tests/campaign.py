@@ -115,9 +115,9 @@ class CampaignTestCase(TestCase):
             )
 
             # check values
-            self.assertEqual(data.get(target_group1_name, 0), group1_count,
+            self.assertEqual(data.get(target_group1_name, 0)['value'], group1_count,
                              test_infos)
-            self.assertEqual(data.get(target_group2_name, 0), group2_count,
+            self.assertEqual(data.get(target_group2_name, 0)['value'], group2_count,
                              test_infos)
 
         # email open check
@@ -125,6 +125,7 @@ class CampaignTestCase(TestCase):
         check('target_group_email_open_pie', 2, 1)
 
         # open landing page
+        
         self.assertContains(resp, 'id="target_group_landing_page_open_pie"')
         check('target_group_landing_page_open_pie', 1, 2)
 

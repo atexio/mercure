@@ -1,0 +1,13 @@
+{% if graphs.attachment_executed_pie %}
+    <div class="col-md-3">
+        <h3>{% trans %}Attachment open{% endtrans %}</h3>
+        <canvas id="attachment_executed_pie"></canvas>
+        {% if graphs.attachment_executed_opened_tracker_count %}
+            <p title="{% trans %}This number is the sum of ALL the attachment opened. One people can open one the attachment several times{% endtrans %}">
+                <b>{% trans %}Total opened{% endtrans %}:</b> {{ graphs.attachment_executed_opened_tracker_count }}
+            </p>
+        {% else %}
+            <b>{% trans %}Not opened{% endtrans %}</b>
+        {% endif %}
+    </div>
+{% endif %}
