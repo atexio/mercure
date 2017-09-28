@@ -88,6 +88,8 @@ def landing_page(request, tracker_id):
         html = landing_page.html
         target = tracker.target
 
+        # Change here to apply inetrpretation (related to
+        # Add_django_interpretation_in_email_template branch)
         for var in get_template_vars(campaign, target, email_template):
             html = html.replace(var['name'], var['value'] or '')
 
