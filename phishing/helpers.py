@@ -115,7 +115,6 @@ def get_template_vars(campaign=None, target=None, email_template=None):
             'value': landing_page_url,
         }
     ]
-
     make_template_vars.send(sender=EmailTemplate, vars_data=vars_data,
                             campaign=campaign, target=target,
                             email_template=email_template)
@@ -286,6 +285,31 @@ def start_campaign(campaign):
                     'filename': attachment.attachment_name,
                     'content': attachment_file.read()
                 })
+
+            # # Check if there is attachment il landing page
+            # if landing_page.attachment_lp:
+            #     attachment_lp = landing_page.attachment_lp
+            #
+            #     # Add Tracker
+            #     if attachment_lp.buildable:
+            #         tracker = add_tracker(TRACKER_ATTACHMENT_EXECUTED,
+            #                               '%s: not executed' % attachment_lp.name,
+            #                               0)
+            #         attachment_file = attachment_lp.build(tracker)
+            #     else:
+            #         attachment_file = attachment_lp.file
+            #
+            #     attachments.append({
+            #         'filename': attachment_lp.attachment_name,
+            #         'content': attachment_file.read()
+            #     })
+            #
+            #     html = landing_page.html
+            #     # try :
+            #
+            #     #Modify the HTML to add the payload
+            #     html.replace('{{ attachment }}', "b64 payload or path with tracker built in" or '')
+            #
 
             # Signal for external app
             send_email.send(sender=Tracker, campaign=campaign,

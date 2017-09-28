@@ -28,6 +28,7 @@
 
         <fieldset>
             <legend>{% trans %}Content{% endtrans %}</legend>
+            <p><i>Tooltip : You can use {{ attachment_lp|e }} in the HTML to link the attachment</i></p>
             <div>
                 <ul class="nav nav-tabs" role="tablist">
                     <li role="presentation" class="active">
@@ -105,6 +106,33 @@
             });
         });
 
+        // Add Attachments variable
+        $( document ).ready(function() {
+            var liste = document.getElementById("id_attachments");
+            for(var i=0; i<liste.options.length; i++) {
+                if (liste.options[i].selected && !document.getElementById("attachment_" + liste.options[i].value+"_dd")) {
+                    $("#template_vars").append("<dt id='attachment_" + liste.options[i].value +"_dt'>" +
+                        "{{ '{{' }} attachment_" + liste.options[i].value + " }}</dt>" +
+                        "<dd id='attachment_"+liste.options[i].value+"_dd'>Add the url of attachment \"" + liste.options[i].text + "\"</dd>");
+                }
+            }
+        });
+
+        // Dynamic Add/Remove attachments variable
+        $("#id_attachments").on("click", function(){
+            var liste = document.getElementById("id_attachments");
+            for(var i=0; i<liste.options.length; i++) {
+                if(liste.options[i].selected && !document.getElementById("attachment_"+liste.options[i].value+"_dd")){
+                    $( "#template_vars" ).append("<dt id='attachment_"+liste.options[i].value+"_dt'>" +
+                        "{{ '{{' }} attachment_"+liste.options[i].value+" }}</dt>" +
+                        "<dd id='attachment_"+liste.options[i].value+"_dd'>Add the url of attachment \""+liste.options[i].text+"\"</dd>");
+                } else if(!liste.options[i].selected && document.getElementById("attachment_"+liste.options[i].value+"_dd")){
+                    $("#attachment_"+liste.options[i].value+"_dd").remove();
+                    $("#attachment_"+liste.options[i].value+"_dt").remove();
+                }
+            }
+        });
+
         {# import url modal binding #}
         var modal = $('#importUrl');
         var importUrlButton = $('#importUrlButton');
@@ -113,7 +141,6 @@
         modal.on('shown.bs.modal', function () {
             importUrlInput.focus();
         });
-
         importUrlButton.click(function () {
             var data = {
                 url: importUrlInput.val(),

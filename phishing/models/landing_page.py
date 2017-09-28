@@ -1,4 +1,7 @@
+from django.db.models import CASCADE
 from django.db.models import CharField, Model, TextField, URLField
+from django.db.models import ForeignKey
+from django.db.models import ManyToManyField
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
@@ -10,10 +13,13 @@ class LandingPage(Model):
 
         :param name(CharField): Name of the landing page in mercure interface
         :param domain(URLField): URL of the landing page's domain
+        :param attachments(ManyToManyField): Attachment which can be downloaded
         :param html(TextField): Html content of the landing page
     """
     name = CharField(_('Landing page name'), max_length=256, unique=True)
     domain = URLField(_('Domain to use'), blank=True)
+    attachments = ManyToManyField('Attachment', blank=True,
+                        related_name='landingpage_attachment')
     html = TextField(_('HTML source code'))
 
     def __str__(self):

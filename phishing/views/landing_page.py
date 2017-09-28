@@ -39,7 +39,7 @@ class Create(LoginRequiredMixin, CreateView):
     """Use to create landing page."""
     model = LandingPage
     success_url = reverse_lazy('landing_page_list')
-    fields = ('name', 'domain', 'html')
+    fields = ('name', 'domain', 'html', 'attachments')
 
     def get_context_data(self, **kwargs):
         ctx = super(Create, self).get_context_data(**kwargs)
