@@ -10,4 +10,7 @@ TRACKER_EMAIL_SEND = 'email_send'
 TRACKER_LANDING_PAGE_OPEN = 'landing_page_open'
 TRACKER_LANDING_PAGE_POST = 'landing_page_post'
 
+TRACKER_LANDING_ATTACHMENT_DOWNLOADED = 'lp_attachment_%s_dl'
+TRACKER_LANDING_ATTACHMENT_EXECUTED = 'lp_attachment_%s_exec'
+
 TRACKER_ATTACHMENT_EXECUTED = 'attachment_executed'

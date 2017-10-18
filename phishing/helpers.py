@@ -8,6 +8,7 @@ import requests
 from django.core.mail import EmailMultiAlternatives
 from django.core.mail.backends.smtp import EmailBackend
 from django.core.urlresolvers import reverse
+from django.template import Context
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 from pyshorteners import Shortener
@@ -16,7 +17,8 @@ from mercure.settings import HOSTNAME
 from phishing.signals import send_email, make_template_vars
 from phishing.strings import TRACKER_LANDING_PAGE_OPEN, \
     TRACKER_LANDING_PAGE_POST, POST_TRACKER_ID, TRACKER_EMAIL_OPEN, \
-    TRACKER_EMAIL_SEND, POST_DOMAIN, TRACKER_ATTACHMENT_EXECUTED
+    TRACKER_EMAIL_SEND, POST_DOMAIN, TRACKER_ATTACHMENT_EXECUTED, \
+    TRACKER_LANDING_ATTACHMENT_DOWNLOADED
 from .models import EmailTemplate, Target, Tracker
 
 
@@ -44,7 +46,17 @@ def clone_url(url):
     return html
 
 
-def get_template_vars(campaign=None, target=None, email_template=None):
+def get_template_context(campaign=None, target=None, email_template=None,
+                         attachments=None):
+    vars = get_template_vars(campaign, target, email_template, attachments)
+    ctx = {}
+    for var in vars:
+        ctx[var['name']] = var['value']
+    return Context(ctx)
+
+
+def get_template_vars(campaign=None, target=None, email_template=None,
+                      attachments=None,):
     """Get template variable infos.
 
     :param campaign: `.models.Campaign`
@@ -54,6 +66,7 @@ def get_template_vars(campaign=None, target=None, email_template=None):
     """
 
     landing_page_url = ''
+
 
     # has landing page ?
     if email_template and email_template.landing_page:
@@ -113,8 +126,27 @@ def get_template_vars(campaign=None, target=None, email_template=None):
             'name': 'landing_page_url',
             'description': _('Url of landing page'),
             'value': landing_page_url,
-        }
+        },
     ]
+
+    # If there is attachments, we add it to the varables list
+    if attachments:
+        for id, attachment in enumerate(attachments):
+            tracker = Tracker.objects.filter(
+                campaign=campaign,
+                target=target,
+                key=TRACKER_LANDING_ATTACHMENT_DOWNLOADED % (id+1)
+            ).first()
+            url = ''
+            if tracker:
+                url = reverse('attachment_download', args=(attachment.pk,
+                                                           tracker.pk))
+
+            vars_data.append({
+                'name': 'attachment_%d_url' % (id+1),
+                'description': 'Attachment URL for "%s"' % attachment.name,
+                'value': url,
+            })
 
     make_template_vars.send(sender=EmailTemplate, vars_data=vars_data,
                             campaign=campaign, target=target,
@@ -331,6 +363,10 @@ def start_campaign(campaign):
 
                 if POST_TRACKER_ID in landing_page.html:
                     add_tracker(TRACKER_LANDING_PAGE_POST, 'no', 0)
+
+                for id, attachment in enumerate(landing_page.attachments.all()):
+                    add_tracker(TRACKER_LANDING_ATTACHMENT_DOWNLOADED % (id+1),
+                                'not downloaded', 0)
 
             mail = EmailMultiAlternatives(
                 subject=replace_vars(target_email.email_subject),

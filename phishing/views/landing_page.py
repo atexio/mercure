@@ -7,16 +7,19 @@ from django.core.urlresolvers import reverse_lazy
 from django.http import HttpResponse, HttpResponseBadRequest, \
     HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
+from django.template import Template
 from django.template.loader import render_to_string
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import DeleteView, UpdateView, CreateView, ListView
 
 from mercure import settings
-from phishing.helpers import clone_url, get_template_vars, intercept_html_post
+from phishing.helpers import clone_url, get_template_vars, intercept_html_post, \
+    get_template_context
 from phishing.models import LandingPage, Tracker, TrackerInfos
 from phishing.strings import TRACKER_LANDING_PAGE_POST, POST_TRACKER_ID, \
     POST_DOMAIN
 from phishing.signals import landing_page_printed
+
 
 
 @permission_required('add_landingpage')
@@ -39,20 +42,25 @@ class Create(LoginRequiredMixin, CreateView):
     """Use to create landing page."""
     model = LandingPage
     success_url = reverse_lazy('landing_page_list')
-    fields = ('name', 'domain', 'html')
+    fields = ('name', 'domain', 'attachments', 'html')
 
     def get_context_data(self, **kwargs):
         ctx = super(Create, self).get_context_data(**kwargs)
 
         # add vars infos
         ctx['template_vars'] = get_template_vars()
-
         return ctx
 
 
 class Edit(Create, UpdateView):
     """Use to edit landing page."""
-    pass
+    def get_context_data(self, **kwargs):
+        ctx = super(Edit, self).get_context_data(**kwargs)
+
+
+        ctx['template_vars'] = get_template_vars(
+            attachments=self.object.attachments.all())
+        return ctx
 
 
 class Delete(PermissionRequiredMixin, DeleteView):
@@ -88,8 +96,10 @@ def landing_page(request, tracker_id):
         html = landing_page.html
         target = tracker.target
 
-        for var in get_template_vars(campaign, target, email_template):
-            html = html.replace(var['name'], var['value'] or '')
+        tpl = Template(html)
+        ctx = get_template_context(campaign, target, email_template,
+                                   landing_page.attachments.all())
+        html = tpl.render(ctx)
 
         # add navigator info script
         navigator_info = render_to_string(

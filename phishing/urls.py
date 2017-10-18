@@ -27,6 +27,8 @@ urlpatterns = [
         attachment.UpdateAttachment.as_view(), name='attachment_edit'),
     url(r'^attachments/delete/(?P<pk>\d+)/$',
         attachment.DeleteAttachment.as_view(), name='attachment_delete'),
+    url(r'^attachments/(?P<attachment_id>\d+)/(?P<tracker_id>[0-9a-z-]+)$',
+        attachment.download, name='attachment_download'),
 
     # landing page
     url(r'^landing-page/$', landing_page.List.as_view(),

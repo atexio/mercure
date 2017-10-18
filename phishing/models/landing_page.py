@@ -1,4 +1,5 @@
-from django.db.models import CharField, Model, TextField, URLField
+from django.db.models import CharField, Model, TextField, URLField, \
+    ManyToManyField
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
@@ -15,6 +16,9 @@ class LandingPage(Model):
     name = CharField(_('Landing page name'), max_length=256, unique=True)
     domain = URLField(_('Domain to use'), blank=True)
     html = TextField(_('HTML source code'))
+    attachments = ManyToManyField('Attachment',
+                                  related_name='landingpage_attachment',
+                                  blank=True)
 
     def __str__(self):
         """
