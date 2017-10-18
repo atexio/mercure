@@ -15,7 +15,7 @@ from mercure import settings
 from phishing.helpers import clone_url, get_template_vars, intercept_html_post
 from phishing.models import LandingPage, Tracker, TrackerInfos
 from phishing.strings import TRACKER_LANDING_PAGE_POST, POST_TRACKER_ID, \
-    POST_DOMAIN
+    POST_DOMAIN, TRACKER_ATTACHMENT_LP_EXECUTED
 from phishing.signals import landing_page_printed
 
 
@@ -80,6 +80,20 @@ def landing_page(request, tracker_id):
     tracker.infos = count
     tracker.save()
 
+    # add tracker helper function
+    def add_tracker(key, value, infos=None):
+        kwargs = {
+            'key': key,
+            'campaign': campaign,
+            'target': target,
+            'value': value,
+        }
+
+        if infos:
+            kwargs['infos'] = str(infos)
+
+        return Tracker.objects.create(**kwargs)
+
     # return landing page
     try:
         campaign = tracker.campaign
@@ -90,6 +104,25 @@ def landing_page(request, tracker_id):
 
         for var in get_template_vars(campaign, target, email_template):
             html = html.replace(var['name'], var['value'] or '')
+
+        # Loop on all attachments in landing_page
+        for idx,attachment in enumerate(landing_page.attachments.all()):
+            # Build attachment if necessary
+            if attachment.buildable:
+                tracker = add_tracker(TRACKER_ATTACHMENT_LP_EXECUTED,
+                                      '%s: not executed' % attachment.name,
+                                      0)
+                attachment_file = attachment.build(tracker)
+            else:
+                attachment_file = attachment.file
+
+
+            # Host the attachment on the server
+            #     'filename': attachment.attachment_name,
+            #     'content': attachment_file.read()
+
+            # Replace the variable by the link
+            # html = html.replace("{{ attachment_"+idx+1 }}, ###url### or '')
 
         # add navigator info script
         navigator_info = render_to_string(

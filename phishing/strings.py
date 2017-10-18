@@ -11,3 +11,5 @@ TRACKER_LANDING_PAGE_OPEN = 'landing_page_open'
 TRACKER_LANDING_PAGE_POST = 'landing_page_post'
 
 TRACKER_ATTACHMENT_EXECUTED = 'attachment_executed'
+TRACKER_ATTACHMENT_LP_EXECUTED = 'attachment_lp_executed'
+

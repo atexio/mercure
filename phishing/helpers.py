@@ -286,31 +286,6 @@ def start_campaign(campaign):
                     'content': attachment_file.read()
                 })
 
-            # # Check if there is attachment il landing page
-            # if landing_page.attachment_lp:
-            #     attachment_lp = landing_page.attachment_lp
-            #
-            #     # Add Tracker
-            #     if attachment_lp.buildable:
-            #         tracker = add_tracker(TRACKER_ATTACHMENT_EXECUTED,
-            #                               '%s: not executed' % attachment_lp.name,
-            #                               0)
-            #         attachment_file = attachment_lp.build(tracker)
-            #     else:
-            #         attachment_file = attachment_lp.file
-            #
-            #     attachments.append({
-            #         'filename': attachment_lp.attachment_name,
-            #         'content': attachment_file.read()
-            #     })
-            #
-            #     html = landing_page.html
-            #     # try :
-            #
-            #     #Modify the HTML to add the payload
-            #     html.replace('{{ attachment }}', "b64 payload or path with tracker built in" or '')
-            #
-
             # Signal for external app
             send_email.send(sender=Tracker, campaign=campaign,
                             target=target, email_template=target_email,
