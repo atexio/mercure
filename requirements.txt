@@ -1,6 +1,6 @@
 # Basics
 django==1.11.5
-djangorestframework==3.6.4
+djangorestframework==3.7.1
 
 # Templates
 django-bootstrap-form==3.3
