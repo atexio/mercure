@@ -10,7 +10,7 @@ from django.test import TestCase
 from django.urls import reverse
 from shutil import copyfile
 
-from phishing.helpers import get_template_vars, replace_template_vars
+from phishing.helpers import get_template_vars, render_jinja2
 from phishing.models import Attachment, Campaign, EmailTemplate, LandingPage, \
     Target, TargetGroup, Tracker, TrackerInfos
 from phishing.signals import make_campaign_report, make_menu, \
@@ -60,7 +60,7 @@ class EmailTemplateSignalTestCase(TestCase, SearchListMixin):
         self.assertEqual(var_data['description'], 'Is a test!')
 
         # test replace
-        content = replace_template_vars('{{ test_var }}')
+        content = render_jinja2('{{ test_var }}')
         self.assertEqual(content, 'Hello!')
 
         # clean
@@ -81,7 +81,7 @@ class EmailTemplateSignalTestCase(TestCase, SearchListMixin):
         self.assertEqual(var_data['value'], 'Hello Word!')
 
         # test replace
-        content = replace_template_vars('{{ email }}')
+        content = render_jinja2('{{ email }}')
         self.assertEqual(content, 'Hello Word!')
 
         # clean
@@ -101,7 +101,7 @@ class EmailTemplateSignalTestCase(TestCase, SearchListMixin):
         self.assertIsNone(var_data)
 
         # test render
-        content = replace_template_vars('{{ email }}')
+        content = render_jinja2('{{ email }}')
         self.assertEqual(content, '')
 
         # clean

@@ -12,6 +12,7 @@ from django.template import Context
 from django.template import Template
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
+from jinja2.sandbox import SandboxedEnvironment
 from pyshorteners import Shortener
 
 from mercure.settings import HOSTNAME
@@ -212,7 +213,7 @@ def minimize_url(url):
     return Shortener('Tinyurl', timeout=10.0).short(url) if url else ''
 
 
-def replace_template_vars(template, campaign=None, target=None,
+def render_jinja2(template, campaign=None, target=None,
                           email_template=None):
     """Replace vars in template
 
@@ -223,8 +224,12 @@ def replace_template_vars(template, campaign=None, target=None,
     :return: content with value
     """
     vars = get_template_vars(campaign, target, email_template)
-    context = Context({v['name']: v['value'] for v in vars })
-    return Template(template).render(context)
+    env = SandboxedEnvironment()
+    context = {}
+    for v in vars:
+        context[v['name']] = v['value']
+    tpl = env.from_string(template)
+    return tpl.render(context)
 
 
 def start_campaign(campaign):
@@ -260,7 +265,7 @@ def start_campaign(campaign):
 
         # replace template vars helper function
         def replace_vars(content):
-            return replace_template_vars(content, campaign, target,
+            return render_jinja2(content, campaign, target,
                                          email_template)
 
         # send email

@@ -5,7 +5,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from phishing.helpers import minimize_url, get_template_vars, \
-    replace_template_vars
+    render_jinja2
 from phishing.models import Target, TargetGroup, EmailTemplate
 from phishing.tests.constant import FIXTURE_PATH
 
@@ -244,18 +244,26 @@ class TemplateTestCase(TestCase):
 
     def test_security_template(self):
         # test render
-        content = replace_template_vars('{{ request }}')
-        print(content)
+        content = render_jinja2('{{ request }}')
         self.assertEqual(content, '')
 
         # test render
-        content = replace_template_vars("{% include 'phishing/email/tracker_image.html' %}")
-        self.assertEqual(content, '')
+        with self.assertRaises(Exception) as context:
+            render_jinja2(
+                "{% include 'phishing/email/tracker_image.html' %}")
+        self.assertTrue('no loader for this environment specified'
+                        in str(context.exception))
 
         # test load
-        content = replace_template_vars('{% load log %}{% get_admin_log 10 as admin_log %}{{ admin_log }}')
-        self.assertEqual(content, '')
+        with self.assertRaises(Exception) as context:
+            render_jinja2(
+                '{% load log %}{% get_admin_log 10 as admin_log %}{{ admin_log }}')
+        self.assertTrue('Encountered unknown tag \'load\'.'
+                        in str(context.exception))
 
         # list load avalible
-        content = replace_template_vars('{% load fghdfhfghd %}')
-        self.assertEqual(content, '')
+        with self.assertRaises(Exception) as context:
+            render_jinja2('{% load fghdfhfghd %}')
+        self.assertTrue('Encountered unknown tag \'load\'.'
+                        in str(context.exception))
+
