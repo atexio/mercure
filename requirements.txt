@@ -31,6 +31,6 @@ unipath==1.1
 selenium==3.6.0
 
 # Documentation
-sphinx==1.6.4
+sphinx==1.6.5
 sphinx-rtd-theme==0.2.4
 pypandoc==1.4
