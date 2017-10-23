@@ -1,13 +1,14 @@
 # Basics
-django==1.11.5
-djangorestframework==3.6.4
+
+django==1.11.6
+djangorestframework==3.7.1
 
 # Templates
 django-bootstrap-form==3.3
 jinja2==2.9.6
 
 # Debugging
-raven==6.1.0
+raven==6.2.1
 
 # Security
 django-axes==2.3.3
@@ -27,9 +28,9 @@ pytz==2017.2
 unipath==1.1
 
 # Testing
-selenium==3.5.0
+selenium==3.6.0
 
 # Documentation
-sphinx==1.6.3
+sphinx==1.6.5
 sphinx-rtd-theme==0.2.4
 pypandoc==1.4
