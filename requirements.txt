@@ -24,7 +24,7 @@ requests==2.18.4
 # Utils
 django-model-utils==3.0.0
 pyshorteners==0.6.1
-pytz==2017.2
+pytz==2017.3
 unipath==1.1
 
 # Testing
