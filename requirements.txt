@@ -1,11 +1,17 @@
 # Basics
-
 django==1.11.7
 djangorestframework==3.7.1
 
 # Templates
 django-bootstrap-form==3.3
 jinja2==2.9.6
+django-datetime-widget==0.9.3
+
+# Jobs
+django-redis-cache==1.7.1
+rq==0.9.0
+rq-scheduler==0.7.0
+django-rq==0.9.6
 
 # Debugging
 raven==6.3.0
@@ -24,7 +30,7 @@ requests==2.18.4
 # Utils
 django-model-utils==3.0.0
 pyshorteners==0.6.1
-pytz==2017.2
+pytz==2017.3
 unipath==1.1
 
 # Testing

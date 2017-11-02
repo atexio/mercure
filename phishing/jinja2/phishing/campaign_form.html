@@ -2,6 +2,10 @@
 
 {% block title %}{% trans %}Start campaign{% endtrans %}{% endblock %}
 
+{% block extra_header %}
+    {{ form.media }}
+{% endblock %}
+
 {% block content %}
     <form method="post">
         {% for field in form %}
@@ -35,4 +39,26 @@
         {{ csrf_input }}
         <button type="submit" class="btn btn-success pull-right">{% trans %}Start campaign{% endtrans %}</button>
     </form>
+{% endblock %}
+
+
+{% block extra_script %}
+<script>
+    var $picker = $('#id_send_at');
+
+    // Auto set picker to the current datetime
+    $picker.datetimepicker('update', new Date());
+
+    // Convert date to UTC before sending
+    $('form').on('submit', function(ev){
+        var pickDate = $picker.find('input').val();
+        $picker.datetimepicker('update', convertToUtc(pickDate));
+    });
+
+    function convertToUtc(str) {
+        var date = new Date(str);
+        return new Date(date.getUTCFullYear(), date.getUTCMonth(),
+            date.getUTCDate(),  date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds())
+     }
+</script>
 {% endblock %}

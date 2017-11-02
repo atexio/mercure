@@ -1,6 +1,8 @@
 import re
 
 from collections import OrderedDict
+
+from datetimewidget.widgets import DateTimeWidget
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, \
     PermissionRequiredMixin
@@ -21,14 +23,26 @@ class CreateCampaign(PermissionRequiredMixin, CreateView):
 
     permission_required = 'add_campaign'
     model = Campaign
-    fields = ('name', 'email_template', 'target_groups', 'smtp_host',
+    fields = ('name', 'email_template', 'target_groups', 'send_at', 'smtp_host',
               'smtp_username', 'smtp_password', 'smtp_use_ssl', 'minimize_url')
     success_url = reverse_lazy('campaign_list')
 
-    def get_context_data(self, **kwargs):
-        ctx = super(CreateCampaign, self).get_context_data(**kwargs)
-        ctx['form'].fields['smtp_use_ssl'].label = _('Use SSL')
-        return ctx
+    def get_form(self, form_class=None):
+        form = super(CreateCampaign, self).get_form(form_class)
+        form.fields['send_at'].widget = DateTimeWidget(
+            attrs={
+                'data-readonly': 'false',
+            },
+            options={
+                'todayBtn': 'linked',
+            },
+            usel10n=True,
+            bootstrap_version=3)
+        form.fields['smtp_use_ssl'].label = _('Use SSL')
+        return form
+
+    def form_valid(self, form):
+        return super(CreateCampaign, self).form_valid(form)
 
 
 @login_required
