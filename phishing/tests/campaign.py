@@ -2,6 +2,7 @@ import json
 import os
 
 from django.core import mail
+from django.test import TestCase
 from django.urls import reverse
 
 from phishing.models import Campaign
@@ -13,10 +14,10 @@ from phishing.models import TrackerInfos
 from phishing.strings import TRACKER_EMAIL_OPEN, TRACKER_LANDING_PAGE_OPEN, \
     TRACKER_LANDING_PAGE_POST
 from phishing.tests.constant import FIXTURE_PATH
-from phishing.tests.helpers import RQTestCase
+from phishing.tests.helpers import RQMixin
 
 
-class CampaignTestCase(RQTestCase):
+class CampaignTestCase(RQMixin, TestCase):
     fixtures = [
         os.path.join(FIXTURE_PATH, 'user.json'),
     ]

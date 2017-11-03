@@ -3,12 +3,14 @@ import os
 from django.core import mail
 from shutil import copyfile
 
+from django.test import TestCase
+
 from phishing.models import Attachment, Campaign, EmailTemplate, LandingPage,\
     Target, TargetGroup
-from phishing.tests.helpers import RQTestCase
+from phishing.tests.helpers import RQMixin
 
 
-class ScenarioTestCase(RQTestCase):
+class ScenarioTestCase(RQMixin, TestCase):
     def test_scenario(self):
         # add landing page
         landing_page_domain = 'https://my-fake-domain.com'

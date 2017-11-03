@@ -21,7 +21,7 @@ from phishing.strings import TRACKER_ATTACHMENT_EXECUTED, TRACKER_EMAIL_OPEN, \
 
 # helpers
 from phishing.tests.constant import FILES_PATH
-from phishing.tests.helpers import RQTestCase
+from phishing.tests.helpers import RQMixin
 
 
 class SearchListMixin(object):
@@ -109,7 +109,7 @@ class EmailTemplateSignalTestCase(TestCase, SearchListMixin):
         self.assertTrue(make_template_vars.disconnect(handler))
 
 
-class LandingPageSignalTestCase(RQTestCase):
+class LandingPageSignalTestCase(RQMixin, TestCase):
     def test_edit_on_call(self):
         # add value handler
         def handler(request, landing_page, **kwarg):
@@ -209,7 +209,7 @@ class MenuSignalTestCase(TestCase, SearchListMixin):
         self.assertTrue(make_menu.disconnect(handler))
 
 
-class CampaignSignalTestCase(RQTestCase):
+class CampaignSignalTestCase(RQMixin, TestCase):
     def test_edit_send_email(self):
         # add value handler
         def handler(email_template, **kwarg):
@@ -248,7 +248,7 @@ class CampaignSignalTestCase(RQTestCase):
         self.assertTrue(send_email.disconnect(handler))
 
 
-class TargetActionSignalTestCase(RQTestCase):
+class TargetActionSignalTestCase(RQMixin, TestCase):
     def send_campaign(self):
         # create campaign
         landing_page = LandingPage.objects.create(
@@ -470,7 +470,7 @@ class TargetActionSignalTestCase(RQTestCase):
         self.assertTrue(post_save.disconnect(handler, sender=TrackerInfos))
 
 
-class ReportSignalTestCase(RQTestCase):
+class ReportSignalTestCase(RQMixin, TestCase):
     def get(self):
         # create campaign
         landing_page = LandingPage.objects.create(

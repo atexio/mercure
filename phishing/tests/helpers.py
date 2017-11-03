@@ -2,14 +2,14 @@ from django.test import TestCase
 from django_rq import get_connection, get_scheduler, get_queue
 
 
-class RQTestCase(TestCase):
+class RQMixin(object):
     def setUp(self):
-        super(RQTestCase, self).setUp()
+        super(RQMixin, self).setUp()
         get_connection().flushdb()
         self.scheduler = get_scheduler()
 
     def tearDown(self):
-        super(RQTestCase, self).tearDown()
+        super(RQMixin, self).tearDown()
         get_connection().flushdb()
 
     def run_jobs(self):

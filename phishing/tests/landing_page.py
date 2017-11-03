@@ -2,6 +2,7 @@ import os
 
 import bs4 as BeautifulSoup
 import requests
+from django.test import TestCase
 from django.urls import reverse
 
 from phishing.helpers import clone_url, intercept_html_post
@@ -10,10 +11,10 @@ from phishing.models import LandingPage, Campaign, TargetGroup, Tracker, \
 from phishing.strings import POST_DOMAIN, TRACKER_LANDING_PAGE_POST, \
     POST_TRACKER_ID
 from phishing.tests.constant import FILES_PATH, FIXTURE_PATH
-from phishing.tests.helpers import RQTestCase
+from phishing.tests.helpers import RQMixin
 
 
-class LandingPageTestCase(RQTestCase):
+class LandingPageTestCase(RQMixin, TestCase):
     fixtures = [
         os.path.join(FIXTURE_PATH, 'target.json'),
         os.path.join(FIXTURE_PATH, 'user.json'),
