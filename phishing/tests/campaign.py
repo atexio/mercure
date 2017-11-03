@@ -2,7 +2,6 @@ import json
 import os
 
 from django.core import mail
-from django.test import TestCase
 from django.urls import reverse
 
 from phishing.models import Campaign
@@ -14,9 +13,10 @@ from phishing.models import TrackerInfos
 from phishing.strings import TRACKER_EMAIL_OPEN, TRACKER_LANDING_PAGE_OPEN, \
     TRACKER_LANDING_PAGE_POST
 from phishing.tests.constant import FIXTURE_PATH
+from phishing.tests.helpers import RQTestCase
 
 
-class CampaignTestCase(TestCase):
+class CampaignTestCase(RQTestCase):
     fixtures = [
         os.path.join(FIXTURE_PATH, 'user.json'),
     ]
@@ -59,6 +59,8 @@ class CampaignTestCase(TestCase):
             Target.objects.create(email=email, group=target_group1)
         campaign.target_groups.add(target_group1)
 
+        self.run_jobs()
+
         target_group2_emails = ('b@test.com', 'c@test.com')
         target_group2_name = 'target group 2 name'
         target_group2 = TargetGroup.objects.create(name=target_group2_name)
@@ -66,6 +68,8 @@ class CampaignTestCase(TestCase):
         for email in target_group2_emails:
             Target.objects.create(email=email, group=target_group2)
         campaign.target_groups.add(target_group2)
+
+        self.run_jobs()
 
         # find and increase tracker
         def add_tracker_entry(tracker_key, email):
@@ -94,6 +98,8 @@ class CampaignTestCase(TestCase):
 
         # check values
         campaign.target_groups.add(target_group1)
+        self.run_jobs()
+
         url = reverse('campaign_dashboard', args=(campaign.pk,))
         self.client.login(username='admin', password='supertest')
         resp = self.client.get(url)
@@ -166,12 +172,15 @@ class CampaignTestCase(TestCase):
 
         # send emails to group 1
         campaign.target_groups.add(target_group1)
+        self.run_jobs()
 
         for track in campaign.trackers.all():
             TrackerInfos.create(target_tracker=track)
 
         # send emails to group 1
         campaign.target_groups.add(target_group1)
+        self.run_jobs()
+
         resp = self.client.get(reverse('campaign_dashboard',
                                        args=(campaign.pk,)))
         self.assertEqual(resp.status_code, 200)
@@ -230,6 +239,8 @@ class CampaignTestCase(TestCase):
         # send emails to group 1
         campaign.target_groups.add(target_group1)
 
+        self.run_jobs()
+
         for track in campaign.trackers.all():
             TrackerInfos.create(target_tracker=track)
 
@@ -282,6 +293,7 @@ class CampaignTestCase(TestCase):
 
         # send emails to group 1
         campaign.target_groups.add(target_group1)
+        self.run_jobs()
 
         for track in campaign.trackers.all():
             TrackerInfos.create(target_tracker=track)
@@ -346,6 +358,7 @@ class CampaignTestCase(TestCase):
 
         # send emails to group 1
         campaign.target_groups.add(target_group1)
+        self.run_jobs()
 
         # check minified url
         self.assertIn('click: http://tinyurl.com/',
@@ -356,6 +369,8 @@ class CampaignTestCase(TestCase):
 
         # send emails to group 1
         campaign.target_groups.add(target_group1)
+
+        self.run_jobs()
         resp = self.client.get(reverse('campaign_dashboard',
                                        args=(campaign.pk,)))
         self.assertEqual(resp.status_code, 200)
@@ -419,11 +434,16 @@ class CampaignTestCase(TestCase):
         # send emails to group 1
         campaign.target_groups.add(target_group1)
 
+        self.run_jobs()
+
         for track in campaign.trackers.all():
             TrackerInfos.create(target_tracker=track)
 
         # send emails to group 1
         campaign.target_groups.add(target_group1)
+
+        self.run_jobs()
+
         resp = self.client.get(reverse('campaign_dashboard',
                                        args=(campaign.pk,)))
         self.assertEqual(resp.status_code, 200)

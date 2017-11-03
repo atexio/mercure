@@ -2,9 +2,8 @@ from django.db.models import CASCADE, CharField, EmailField, ForeignKey, Model
 from django.db.models.signals import m2m_changed
 from django.dispatch import receiver
 from django.utils.translation import ugettext_lazy as _
+from django_rq import get_scheduler
 
-import django_rq
-scheduler = django_rq.get_scheduler('default')
 
 class Target(Model):
     """
@@ -57,6 +56,4 @@ def handler(action, instance, model, **kwargs):
     """
     if action == 'post_add' and model == TargetGroup:
         from phishing.helpers import start_campaign
-        job = scheduler.enqueue_at(instance.send_at, start_campaign, instance)
-        print(job)
-
+        get_scheduler().enqueue_at(instance.send_at, start_campaign, instance)

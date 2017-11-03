@@ -32,7 +32,7 @@ class Campaign(Model):
     email_template = ForeignKey('EmailTemplate', related_name='campaigns')
     name = CharField(_('Campaign name'), max_length=128)
     target_groups = ManyToManyField('TargetGroup', related_name='campaigns')
-    send_at = DateTimeField()
+    send_at = DateTimeField(default=now)
 
     # app config
     minimize_url = BooleanField(_('Minimize url in email'), default=False)

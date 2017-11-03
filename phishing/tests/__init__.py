@@ -4,8 +4,8 @@ from .landing_page import LandingPageTestCase
 from .scenario import ScenarioTestCase
 from .selenium import SeleniumTestCase
 from .signal import CampaignSignalTestCase, EmailTemplateSignalTestCase, \
-    LandingPageSignalTestCase, MenuSignalTestCase, ReportSignalTestCase, \
-    TargetActionSignalTestCase
+   LandingPageSignalTestCase, MenuSignalTestCase, ReportSignalTestCase, \
+   TargetActionSignalTestCase
 from .target import TargetTestCase
 from .template import TemplateTestCase
 from .tracker import TrackerTestCase

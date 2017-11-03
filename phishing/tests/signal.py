@@ -21,6 +21,7 @@ from phishing.strings import TRACKER_ATTACHMENT_EXECUTED, TRACKER_EMAIL_OPEN, \
 
 # helpers
 from phishing.tests.constant import FILES_PATH
+from phishing.tests.helpers import RQTestCase
 
 
 class SearchListMixin(object):
@@ -108,7 +109,7 @@ class EmailTemplateSignalTestCase(TestCase, SearchListMixin):
         self.assertTrue(make_template_vars.disconnect(handler))
 
 
-class LandingPageSignalTestCase(TestCase):
+class LandingPageSignalTestCase(RQTestCase):
     def test_edit_on_call(self):
         # add value handler
         def handler(request, landing_page, **kwarg):
@@ -137,6 +138,8 @@ class LandingPageSignalTestCase(TestCase):
             email_template=email_template
         )
         campaign.target_groups.add(target_group)
+        self.run_jobs()
+
         landing_page_url = mail.outbox[-1].body.split('<')[0]
 
         # call landing page ans test result
@@ -206,7 +209,7 @@ class MenuSignalTestCase(TestCase, SearchListMixin):
         self.assertTrue(make_menu.disconnect(handler))
 
 
-class CampaignSignalTestCase(TestCase):
+class CampaignSignalTestCase(RQTestCase):
     def test_edit_send_email(self):
         # add value handler
         def handler(email_template, **kwarg):
@@ -235,6 +238,8 @@ class CampaignSignalTestCase(TestCase):
             email_template=email_template
         )
         campaign.target_groups.add(target_group)
+        self.run_jobs()
+
         self.assertEqual(mail.outbox[-1].body, 'Hello!')
         mail_html = mail.outbox[-1].alternatives[0][0]
         self.assertEqual(mail_html.split('<')[0], 'Hi!')
@@ -243,7 +248,7 @@ class CampaignSignalTestCase(TestCase):
         self.assertTrue(send_email.disconnect(handler))
 
 
-class TargetActionSignalTestCase(TestCase):
+class TargetActionSignalTestCase(RQTestCase):
     def send_campaign(self):
         # create campaign
         landing_page = LandingPage.objects.create(
@@ -282,6 +287,8 @@ class TargetActionSignalTestCase(TestCase):
             email_template=email_template
         )
         campaign.target_groups.add(target_group)
+        self.run_jobs()
+
         return campaign
 
     def test_attachment_executed(self):
@@ -413,9 +420,9 @@ class TargetActionSignalTestCase(TestCase):
 
         # test if handler has call
         raw = 'handler_%s_test_ok' % TRACKER_EMAIL_SEND
-        test_result_traker = TrackerInfos.objects.filter(raw=raw).first()
-        self.assertIsNotNone(test_result_traker)
-        tracker = test_result_traker.target_tracker
+        test_result_tracker = TrackerInfos.objects.filter(raw=raw).first()
+        self.assertIsNotNone(test_result_tracker)
+        tracker = test_result_tracker.target_tracker
         self.assertEqual(campaign.pk, tracker.campaign.pk)
         self.assertEqual(TRACKER_EMAIL_SEND, tracker.key)
 
@@ -463,7 +470,7 @@ class TargetActionSignalTestCase(TestCase):
         self.assertTrue(post_save.disconnect(handler, sender=TrackerInfos))
 
 
-class ReportSignalTestCase(TestCase):
+class ReportSignalTestCase(RQTestCase):
     def get(self):
         # create campaign
         landing_page = LandingPage.objects.create(
@@ -485,6 +492,7 @@ class ReportSignalTestCase(TestCase):
             email_template=email_template
         )
         campaign.target_groups.add(target_group)
+        self.run_jobs()
 
         # init
         user_infos = {'username': 'default', 'password': 'pass'}
