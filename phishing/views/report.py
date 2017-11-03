@@ -1,48 +1,106 @@
 import re
-
 from collections import OrderedDict
+
+from bs4 import BeautifulSoup
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin, \
-    PermissionRequiredMixin
-from django.core.urlresolvers import reverse_lazy
-from django.shortcuts import get_object_or_404, render
-from django.utils.translation import ugettext_lazy as _
-from django.views.generic import CreateView, ListView, DeleteView, DetailView
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
+from django.template.loader import render_to_string
 
-from phishing.models import Target, Campaign, Tracker, TrackerInfos
-from ..helpers import to_hour_timestamp
-from phishing.signals import make_campaign_report
-
-
-class CreateCampaign(PermissionRequiredMixin, CreateView):
-    """Use to create campaign."""
-
-    permission_required = 'add_campaign'
-    model = Campaign
-    fields = ('name', 'email_template', 'target_groups', 'smtp_host',
-              'smtp_username', 'smtp_password', 'smtp_use_ssl', 'minimize_url')
-    success_url = reverse_lazy('campaign_list')
-
-    def get_context_data(self, **kwargs):
-        ctx = super(CreateCampaign, self).get_context_data(**kwargs)
-        ctx['form'].fields['smtp_use_ssl'].label = _('Use SSL')
-        return ctx
-
+from phishing.helpers import to_hour_timestamp
+from phishing.models import Campaign
+from phishing.models import EmailTemplate
+from phishing.models import Target
+from phishing.models import Tracker
+from phishing.models import TrackerInfos
 
 @login_required
-def dashboard(request, pk):
-    """Show dashboard of campaign.
+def render_report(request, campaign_id):
+    template_name = 'phishing/report_render.html'
+    campaign = get_object_or_404(Campaign, pk=campaign_id)
+    email_template = get_object_or_404(EmailTemplate, pk=campaign.email_template.pk)
 
-    :param request:
-    :param pk:
-    :return:
-    """
-    campaign = get_object_or_404(Campaign, pk=pk)
+    context = {}
+
+    context['campaign'] = campaign
+    context['email_template'] = email_template
+
+
+    # last event timestamp
+    last_event_datetime = Tracker.objects.filter(campaign_id=campaign_id)\
+        .order_by('updated_at').last().updated_at
+    context['last_event_datetime'] = last_event_datetime
+
+    nb_email_send = Tracker.objects.filter(campaign_id=campaign_id,
+                                           key="email_send",
+                                           value="success").count()
+    context['nb_email_send'] = nb_email_send
+
+    nb_email_fail = Tracker.objects.filter(campaign_id=campaign_id,
+                                           key="email_send",
+                                           value="fail").count()
+    context['nb_email_fail'] = nb_email_fail
+
+
+    nb_email_open = Tracker.objects.filter(campaign_id=campaign_id,
+                                           key="email_open",
+                                           value="opened").count()
+    context['nb_email_open'] = nb_email_open
+
+    if email_template.landing_page:
+        nb_landing_page_opened = Tracker.objects.filter(campaign_id=campaign_id,
+                                               key="landing_page_open",
+                                               value="opened").count()
+        context['nb_landing_page_opened'] = nb_landing_page_opened
+
+        landing_page_post = Tracker.objects.filter(campaign_id=campaign_id,
+                                               key="landing_page_post",
+                                               value="yes")
+        context['landing_page_post'] = landing_page_post
+
+        has_landing_page_post = Tracker.objects.filter(campaign_id=campaign_id,
+                                               key="landing_page_post",
+                                               value="no").count()
+        context['has_landing_page_post'] = has_landing_page_post
+
+        infos_trackers = []
+        if landing_page_post.count() > 0:
+            for tracker in landing_page_post:
+                info_trackers = (TrackerInfos.objects.filter(
+                    target_tracker=tracker))
+
+                for tracker_info in info_trackers:
+                    infos_trackers.append(tracker_info)
+            context['infos_trackers'] = infos_trackers
+
+    if email_template.attachments:
+        nb_attachment_executed = Tracker.objects.filter(campaign_id=campaign_id,
+                                               key="attachment_executed",
+                                               value="executed").count()
+        context['nb_attachment_executed'] = nb_attachment_executed
+
+    context['graphs'] = generate_graphs(campaign_id)
+
+    rendered = render_to_string(request=request,
+                                template_name=template_name,
+                                context=context)
+
+    soup = BeautifulSoup(rendered, 'html5lib')
+
+    for img in soup.find_all('img'):
+        img['width'] = '500'
+
+    return HttpResponse(str(soup))
+
+
+
+def generate_graphs(campaign_id):
+    campaign = get_object_or_404(Campaign, pk=campaign_id)
     graphs = {}
     targets_details = {}
 
     # last event timestamp
-    last_event_datetime = Tracker.objects.filter(campaign_id=pk)\
+    last_event_datetime = Tracker.objects.filter(campaign_id=campaign_id) \
         .order_by('updated_at').last().updated_at
 
     # generate empty value
@@ -100,7 +158,7 @@ def dashboard(request, pk):
         return re.sub('[^0-9a-zA-Z]+', '_', name)
 
     # generate tracker graph
-    for tracker in Tracker.objects.filter(campaign_id=pk) \
+    for tracker in Tracker.objects.filter(campaign_id=campaign_id) \
             .order_by('created_at'):  # order column (in user details)
         # init targets details
         if tracker.target_id not in targets_details:
@@ -112,7 +170,7 @@ def dashboard(request, pk):
         targets_details[tracker.target_id][tracker.key] = tracker
         value = '%s (%s)' % (tracker.key, tracker.value)
         unchanged_value = (
-              tracker.updated_at - tracker.created_at).total_seconds() < 1
+                              tracker.updated_at - tracker.created_at).total_seconds() < 1
         pie_color_value = '#bdc3c7' if unchanged_value else '#e67e22'
 
         add_pie_value(key, value, pie_color_value)
@@ -190,41 +248,4 @@ def dashboard(request, pk):
         if name.endswith('_histogram'):
             graphs[name] = {i: empty_values_histogram for i in graphs[index]}
 
-    # init graph layout
-    tabs_layout = OrderedDict()
-    tabs_layout['Global'] = ['global.html', 'email_open.html',
-                             'landing_page.html', 'attachment.html']
-
-    # add target group graph
-    if campaign.target_groups.count() > 1:
-        tabs_layout['Global'].append('target_group.html')
-
-    # if staff => more details (annonimized for client account)
-    if request.user.is_superuser:
-        tabs_layout['Users details'] = ['targets_details.html']
-
-    tabs_layout['Other'] = ['campaign_infos.html']
-
-    context = {
-        'graphs': graphs,
-        'campaign': campaign,
-        'tabs_layout': tabs_layout,
-        'targets_details': targets_details,
-    }
-
-    # call modules handler
-    make_campaign_report.send(sender=Campaign, context=context,
-                              campaign=campaign)
-    return render(request, 'phishing/campaign_dashboard.html', context)
-
-
-class Delete(PermissionRequiredMixin, DeleteView):
-    """Use to delete campaign."""
-    model = Campaign
-    permission_required = 'del_campaign'
-    success_url = reverse_lazy('campaign_list')
-
-
-class ListCampaign(LoginRequiredMixin, ListView):
-    """Use to create campaign"""
-    model = Campaign
+    return graphs

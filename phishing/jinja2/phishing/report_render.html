@@ -1,0 +1,384 @@
+{% block extra_header %}
+    <link rel="stylesheet" media="all" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link rel="stylesheet" media="all" href="https://gitcdn.github.io/bootstrap-toggle/2.2.0/css/bootstrap-toggle.min.css">
+    <style>
+        h1{
+            text-align: center;
+        }
+        h3{
+            page-break-before:always;
+        }
+        table {
+            border: 1px solid;
+            margin: 0 auto;
+            width: 90%;
+        }
+
+        td, th {
+            text-align: center;
+            border: 1px solid;
+        }
+        @media print {
+            .no-print {
+                visibility: hidden;
+            }
+            td{
+                font-size: 25pt;
+            }
+            h3{
+                font-size: 40pt;
+            }
+            p{
+                font-size: 40pt;
+            }
+            h1{
+                font-size: 60pt;
+                text-align: center;
+            }
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <button class="btn btn-primary hidden-print no-print" onclick="toPrint()"><span class="glyphicon glyphicon-print" aria-hidden="true"></span> Print</button><br/>
+    <div class="print">
+        <h1>Campaign : <b>{{ campaign.name }}</b></h1><br/>
+        <p>Dernier evenement : <b>{{ last_event_datetime }}</b><br/></p>
+
+        <br/>
+        <h3>Emails :</h3><br/>
+        <table>
+            <thead>
+            <tr>
+                <th>Valeur</th>
+                <th>Détail</th>
+            </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Email envoyé</td>
+                    <td>{{ nb_email_send }}</td>
+                </tr>
+                <tr>
+                    <td>Email failed</td>
+                    <td>{{ nb_email_fail }}</td>
+                </tr>
+                <tr>
+                    <td>Email ouvert</td>
+                    <td>{{ nb_email_open }}</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="col-xs-6">
+            <canvas id="email_send_pie" height="100" class="pie"></canvas>
+        </div>
+        <div class="col-xs-6">
+            <canvas id="email_open_pie" height="100"></canvas>
+            {% if graphs.email_open_opened_tracker_count %}
+                <p title="{% trans %}This number is the sum of ALL the email opened. One people can open one the email several times{% endtrans %}">
+                <b>{% trans %}Total opened{% endtrans %}:</b> {{ graphs.email_open_opened_tracker_count }}
+                </p>
+            {% else %}
+                <b>{% trans %}Not opened{% endtrans %}</b>
+            {% endif %}
+        </div>
+
+        {% if email_template.atttachments %}
+            <br/>
+            <h3>Attachments :</h3><br/>
+            <table>
+                <thead>
+                <tr>
+                    <th>Valeur</th>
+                    <th>Détail</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Nb attachment executed</td>
+                        <td>{{ nb_attachment_executed }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="col-xs-12">
+                <canvas id="attachment_executed_pie" height="50"></canvas>
+                {% if graphs.attachment_executed_opened_tracker_count %}
+                    <p title="{% trans %}This number is the sum of ALL the attachment opened. One people can open one the attachment several times{% endtrans %}">
+                        <b>{% trans %}Total opened{% endtrans %}:</b> {{ graphs.attachment_executed_opened_tracker_count }}
+                    </p>
+                {% else %}
+                    <b>{% trans %}Not opened{% endtrans %}</b>
+                {% endif %}
+            </div>
+        {% endif %}
+
+
+        {% if email_template.landing_page %}
+            <br/>
+            <h3>Landing page :</h3><br/>
+            <table>
+                <thead>
+                <tr>
+                    <th>Valeur</th>
+                    <th>Détail</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Nb landing page opened</td>
+                        <td>{{ nb_landing_page_opened }}</td>
+                    </tr>
+                    <tr>
+                        <td>Nb landing page posted</td>
+                        <td>{{ nb_landing_page_post|length }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            {% if has_landing_page_post %}
+                <div class="col-xs-6">
+                    <canvas id="landing_page_open_pie" height="100"></canvas>
+                    {% if graphs.landing_page_open_opened_tracker_count %}
+                        <p  title="{% trans %}This number is the sum of ALL the landingpage opened. One people can open one the landingpage several times{% endtrans %}">
+                            <b>{% trans %}Total opened{% endtrans %}:</b> {{ graphs.landing_page_open_opened_tracker_count }}
+                        </p>
+                    {% else %}
+                        <b>{% trans %}Not opened{% endtrans %}</b>
+                    {% endif %}
+                </div>
+                <div class="col-xs-6">
+                    <canvas id="landing_page_post_pie" height="100"></canvas>
+                    {% if graphs.landing_page_post_yes_tracker_count %}
+                        <p  title="{% trans %}This number is the sum of ALL the post on the landingpage opened. One people can post multiple times on the landingpage.{% endtrans %}">
+                            <b>{% trans %}Total posted{% endtrans %}:</b> {{ graphs.landing_page_post_yes_tracker_count }}
+                        </p>
+                    {% else %}
+                        <b>{% trans %}Not opened{% endtrans %}</b>
+                    {% endif %}
+                </div>
+            {% else %}
+                <div class="col-xs-12">
+                    <canvas id="landing_page_open_pie" height="50"></canvas>
+                    {% if graphs.landing_page_open_opened_tracker_count %}
+                        <p  title="{% trans %}This number is the sum of ALL the landingpage opened. One people can open one the landingpage several times{% endtrans %}">
+                            <b>{% trans %}Total opened{% endtrans %}:</b> {{ graphs.landing_page_open_opened_tracker_count }}
+                        </p>
+                    {% else %}
+                        <b>{% trans %}Not opened{% endtrans %}</b>
+                    {% endif %}
+                </div>
+            {% endif %}
+
+
+            <br/>
+            <h3>Values posted in landing_page :</h3><br/>
+            <table>
+                <thead>
+                <tr>
+                    <th>Valeur</th>
+                    <th>Détail</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {% for post in infos_trackers %}
+                        <tr>
+                            <td>{{ post }}</td>
+                            <td>{{ post.raw }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block extra_script %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.5/jspdf.debug.js"></script>
+    <script>
+        var charts = {};
+        var charts_data = {
+            {% for index, values in graphs.items() %}
+                {{ index }}: {{ values|safe }},
+            {% endfor %}
+        };
+        var colors_list = [
+            //Light1
+            "#3A7696",
+            "#EC7553",
+            "#ECA653",
+            "#3BA76D",
+            //Basic
+            "#D9532C",
+            "#22668A",
+            "#D98A2C",
+            "#1F9958",
+            //Dark1
+            "#B13714",
+            "#124F70",
+            "#B16914",
+            "#0E7D42",
+            //Dark2
+            "#8A1F00",
+            "#053B58",
+            "#8A4B00",
+            "#00622D"
+        ];
+
+        function toPrint() {
+            window.print();
+        }
+
+        function* color_generator() {
+            // infinite stream values
+            while (true) for (var item of colors_list) yield item;
+        }
+
+        function init_all_graph() {
+            for (var canvas_id in charts_data)
+                init_graph(canvas_id);
+        }
+
+        function init_graph(canvas_id) {
+            // get canvas and check for init
+            var canvas = document.getElementById(canvas_id);
+            if (!canvas)                return; // not canvas
+            if (!canvas.offsetParent)   return; // not canvas visible
+            if (charts[canvas_id])      return; // graph already exist
+
+            // get loader handler
+            var canvas_id_split = canvas_id.split('_');
+            var loader_name = 'load_' + canvas_id_split[canvas_id_split.length - 1];
+            var loader_handler = window[loader_name];
+
+            if (!loader_handler)
+                return console.log('"' + canvas_id + '" graph type unknown');
+
+            // init graph
+            charts[canvas_id] = loader_handler(canvas, charts_data[canvas_id]);
+
+            // add legend
+            var legend = document.getElementById(canvas_id + "_legend");
+            if (legend) {
+                legend.innerHTML = charts[canvas_id].generateLegend();
+                legend.className += " chart-legend";
+            }
+        }
+
+        function load_histogram(canvas, values) {
+            // get data
+            var color = color_generator();
+            var data = {labels: [], datasets: []};
+
+            var to_date = function(key) {
+                return new Date(key * 1000);
+            };
+
+            for (var label in values) {
+                var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(color.next().value);
+                var r = parseInt(result[1], 16);
+                var g = parseInt(result[2], 16);
+                var b = parseInt(result[3], 16);
+
+                data.labels = Object.keys(values[label]).map(to_date);
+                data.datasets.push({
+                    label: label,
+                    fill: false,
+                    lineTension: 0.1,
+                    borderColor: "rgba("+r+","+g+","+b+",1)",
+                    fillColor: "rgba("+r+","+g+","+b+",0.2)",
+                    backgroundColor: "rgba("+r+","+g+","+b+",0.2)",
+                    pointBorderColor: "rgba("+r+","+g+","+b+",1)",
+                    pointHoverBackgroundColor: "rgba("+r+","+g+","+b+",1)",
+                    pointHoverBorderColor: "rgba("+r+","+g+","+b+",1)",
+                    data: Object.keys(values[label]).map(function (key) {
+                        return values[label][key];
+                    })
+                });
+            }
+
+            var options = {
+                scales: {
+                    xAxes: [{
+                        type: "time",
+                        time: {
+                            format: 'MM/DD/YYYY HH:mm',
+                            tooltipFormat: 'll HH:mm'
+                        },
+                        scaleLabel: {
+                            display: true,
+                            labelString: '{% trans %}Date{% endtrans %}'
+                        },
+                        ticks: {
+                            maxRotation: 0
+                        }
+                    }],
+                    yAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: '{% trans %}Count{% endtrans %}'
+                        }
+                    }]
+                }
+            };
+
+            // round date (merge)
+            if (data.labels.length > 30*24)
+                options.scales.xAxes[0].time.round = 'day';
+
+            if (data.labels.length > 3*30*24)
+                options.scales.xAxes[0].time.round = 'week';
+
+            if (data.labels.length > 6*30*24)
+                options.scales.xAxes[0].time.round = 'month';
+
+            // create graph
+            return new Chart(canvas, {
+                type: 'line',
+                data: data,
+                options: options
+            });
+        }
+
+        function load_pie(canvas, values) {
+            var labels = [];
+            var data = [];
+            var pie_color = [];
+
+            Object.keys(values).map(function (key) {
+                labels.push(key);
+                data.push(values[key]['value']);
+
+                if (values[key]['color'])
+                    pie_color.push(values[key]['color']);
+            });
+
+            var data = {
+                labels: labels,
+                datasets: [
+                    {
+                        data: data,
+                        backgroundColor: pie_color.length ? pie_color : colors_list,
+                        hoverBackgroundColor: pie_color.length ? pie_color : colors_list,
+                    }
+                ]
+            };
+            console.log(data);
+
+            // create graph
+            return new Chart(canvas, {
+                type: 'pie',
+                data: data,
+            });
+        }
+
+        $(function() {
+            init_all_graph();
+
+            $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                init_all_graph();
+            })
+        })
+    </script>
+{% endblock %}

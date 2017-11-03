@@ -1,6 +1,13 @@
 {% extends 'base.html' %}
 
-{% block title %}{% trans %}Campaigns report{% endtrans %}{% endblock %}
+{% block title %}
+    {% trans %}Campaigns report{% endtrans %}
+    <a href="{{ url('report_render', args=(campaign.pk,)) }}"
+        class="btn btn-danger">
+        <span class="glyphicon glyphicon-cog"></span>
+        {% trans %}RenderReport{% endtrans %}
+    </a>
+{% endblock %}
 
 {% block content %}
     <div>
@@ -204,7 +211,6 @@
                     }
                 ]
             };
-
             // create graph
             return new Chart(canvas, {
                 type: 'pie',

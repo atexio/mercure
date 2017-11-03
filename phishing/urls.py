@@ -2,7 +2,7 @@ from django.conf.urls import url
 from django.views.generic import RedirectView
 
 from phishing.views import tracker
-from .views import campaign, landing_page, target, email_template, attachment
+from .views import campaign, landing_page, target, email_template, attachment, report
 
 urlpatterns = [
     url(r'^$',
@@ -17,6 +17,8 @@ urlpatterns = [
         name='campaign_delete'),
     url(r'^campaigns/dashboard/(?P<pk>\d+)/$', campaign.dashboard,
         name='campaign_dashboard'),
+    url(r'^render/(?P<campaign_id>\d+)', report.render_report,
+        name='report_render'),
 
     # attachments
     url(r'^attachments/$', attachment.ListAttachment.as_view(),

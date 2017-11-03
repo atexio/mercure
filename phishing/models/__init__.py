@@ -6,12 +6,14 @@ from django.db.models.signals import post_migrate
 from .attachment import Attachment
 from .campaign import Campaign
 from .email_template import EmailTemplate
+from .report import Report
 from .landing_page import LandingPage
 from .target import Target, TargetGroup
 from .tracker import Tracker, TrackerInfos
 from .user import User
 
-__all__ = ['Attachment', 'Campaign', 'EmailTemplate', 'LandingPage',
+
+__all__ = ['Attachment', 'Campaign', 'EmailTemplate', 'LandingPage', 'Report'
            'Target', 'TargetGroup', 'Tracker', 'TrackerInfos', 'User']
 
 
