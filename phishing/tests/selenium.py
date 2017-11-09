@@ -3,6 +3,8 @@ from time import sleep
 
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.urls import reverse
+from django.test import tag
+
 
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select
@@ -11,6 +13,7 @@ from phishing.models import Campaign, TargetGroup, LandingPage, EmailTemplate
 from phishing.tests.constant import FIXTURE_PATH
 
 
+@tag('selenium')
 class SeleniumTestCase(StaticLiveServerTestCase):
     fixtures = [
         os.path.join(FIXTURE_PATH, 'landing_page.json'),
