@@ -15,7 +15,7 @@ from phishing.tests.helpers import RQMixin
 
 
 @tag('selenium')
-class SeleniumTestCase(StaticLiveServerTestCase):
+class SeleniumTestCase(RQMixin, StaticLiveServerTestCase):
     fixtures = [
         os.path.join(FIXTURE_PATH, 'landing_page.json'),
         os.path.join(FIXTURE_PATH, 'target.json'),
