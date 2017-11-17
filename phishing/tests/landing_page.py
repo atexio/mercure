@@ -554,8 +554,7 @@ class LandingPageTestCase(RQMixin, TestCase):
         html_result = intercept_html_post(source_html, source_url)
         self.assertEqual(_clean_html(html_result), need_html)
 
-
-        # imbriqued helper (edit on fist call only)
+        # imbricated helper (edit on fist call only)
         html_result = intercept_html_post(source_html, source_url)
         html_result = intercept_html_post(html_result, source_url)
         self.assertEqual(_clean_html(html_result), need_html)
