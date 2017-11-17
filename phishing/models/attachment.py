@@ -64,6 +64,6 @@ class Attachment(Model):
             })
 
             # TODO: Find a way to handle this RCE ;)
-            cmd = ['bash', builder_path]
+            cmd = ['sh', builder_path]
             out_b64 = check_output(cmd, cwd=path, env=env).decode().strip()
             return BytesIO(b64decode(out_b64))
