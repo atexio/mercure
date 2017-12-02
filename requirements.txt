@@ -1,6 +1,6 @@
 # Basics
 
-django==1.11.7
+django==2.0
 djangorestframework==3.7.3
 
 # Templates
