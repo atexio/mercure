@@ -8,14 +8,14 @@ django-bootstrap-form==3.3
 jinja2==2.10
 
 # Debugging
-raven==6.3.0
+raven==6.4.0
 
 # Security
 django-axes==3.0.3
 
 # Data parsing
 beautifulsoup4==4.6.0
-html5lib==1.0b10
+html5lib==1.0.1
 cchardet==2.1.1
 
 # Networking
@@ -28,7 +28,7 @@ pytz==2017.3
 unipath==1.1
 
 # Testing
-selenium==3.7.0
+selenium==3.8.0
 
 # Documentation
 sphinx==1.6.5
