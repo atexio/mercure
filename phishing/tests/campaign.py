@@ -1,9 +1,12 @@
 import json
 import os
+from datetime import timedelta
 
 from django.core import mail
 from django.test import TestCase
 from django.urls import reverse
+from django.utils.timezone import now
+from freezegun import freeze_time
 
 from phishing.models import Campaign
 from phishing.models import EmailTemplate
@@ -27,6 +30,57 @@ class CampaignTestCase(RQMixin, TestCase):
         resp = self.client.get(reverse('campaign_add'))
         self.assertEqual(resp.context['form'].fields['smtp_use_ssl'].label,
                          'Use SSL')
+
+    def test_dashboard_campaign_in_future(self):
+        # add landing page
+        landing_page = LandingPage.objects.create(
+            domain='https://my-fake-domain.com',
+            html='<form><input name="test"></form>',
+            name='name',
+        )
+
+        # add email template
+        email_template = EmailTemplate.objects.create(
+            email_subject='Hello!',
+            from_email='account@example.com',
+            landing_page=landing_page,
+            name='email template name',
+            text_content='Goodbye!',
+        )
+
+        # create campaign
+        campaign = Campaign.objects.create(
+            email_template=email_template,
+            name='test group graph',
+            send_at=now() + timedelta(hours=1)
+        )
+
+        # add targets emails
+        target_group1_emails = ('a@test.com', 'b@test.com')
+        target_group1_name = 'target group 1 name'
+        target_group1 = TargetGroup.objects.create(name=target_group1_name)
+
+        for email in target_group1_emails:
+            Target.objects.create(email=email, group=target_group1)
+        campaign.target_groups.add(target_group1)
+
+        # Test that campaign is not launched
+        self.run_jobs()
+        self.assertFalse(campaign.is_launched)
+
+        self.client.login(username='admin', password='supertest')
+        url = reverse('campaign_dashboard', args=(campaign.pk,))
+        resp = self.client.get(url)
+        self.assertEqual(resp.status_code, 404)
+
+        # Assert that campaign is correctly launched
+        with freeze_time(now() + timedelta(hours=2)):
+            self.run_jobs()
+            self.assertTrue(campaign.is_launched)
+            url = reverse('campaign_dashboard', args=(campaign.pk,))
+            resp = self.client.get(url)
+            self.assertEqual(resp.status_code, 200)
+
 
     def test_dashboard_campaign_target_groups(self):
         # add landing page
@@ -100,18 +154,9 @@ class CampaignTestCase(RQMixin, TestCase):
         # check values
         campaign.target_groups.add(target_group1)
 
-        # Test campaign not launched
-        self.assertFalse(campaign.is_launched)
-
-
-        self.client.login(username='admin', password='supertest')
-        url = reverse('campaign_dashboard', args=(campaign.pk,))
-        resp = self.client.get(url)
-        self.assertEqual(resp.status_code, 404)
-
-        # Launch campaign
         self.run_jobs()
 
+        self.client.login(username='admin', password='supertest')
         url = reverse('campaign_dashboard', args=(campaign.pk,))
         resp = self.client.get(url)
         self.assertEqual(resp.status_code, 200)

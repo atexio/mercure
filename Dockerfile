@@ -13,7 +13,7 @@ COPY . /usr/src/app
 # prepare django
 RUN python manage.py makemigrations
 RUN python manage.py collectstatic --noinput
-RUN cp docker/django.conf /etc/supervisor/conf.d/
+RUN mkdir /etc/supervisor.d && cp docker/django.ini /etc/supervisor.d/
 
 # start django
 EXPOSE 8000
