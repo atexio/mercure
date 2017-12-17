@@ -17,6 +17,14 @@ EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', 'P@SSWORD')
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 SERVER_EMAIL = EMAIL_HOST_USER
 
+CACHES = {
+    'default': {
+        'BACKEND': 'redis_cache.cache.RedisCache',
+        'LOCATION': '%s:%s' % (os.environ.get('REDIS_HOST', 'redis'),
+                               os.environ.get('REDIS_PORT', '6379')),
+    },
+}
+
 # sentry.io (send error to platform)
 if 'SENTRY_DSN' in os.environ:
     import raven
