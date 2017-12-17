@@ -3,7 +3,7 @@ import json
 from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin, \
     PermissionRequiredMixin
-from django.core.urlresolvers import reverse_lazy
+from django.urls import reverse_lazy
 from django.http import HttpResponse, HttpResponseBadRequest, \
     HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render

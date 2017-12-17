@@ -7,7 +7,7 @@ import bs4 as BeautifulSoup
 import requests
 from django.core.mail import EmailMultiAlternatives
 from django.core.mail.backends.smtp import EmailBackend
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 from pyshorteners import Shortener
