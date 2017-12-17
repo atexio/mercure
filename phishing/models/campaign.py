@@ -29,8 +29,7 @@ class Campaign(Model):
     email_template = ForeignKey('EmailTemplate', related_name='campaigns',
                                 on_delete=CASCADE)
     name = CharField(_('Campaign name'), max_length=128)
-    target_groups = ManyToManyField('TargetGroup', related_name='campaigns',
-                                    on_delete=CASCADE)
+    target_groups = ManyToManyField('TargetGroup', related_name='campaigns')
 
     # app config
     minimize_url = BooleanField(_('Minimize url in email'), default=False)
