@@ -99,10 +99,20 @@ class CampaignTestCase(RQMixin, TestCase):
 
         # check values
         campaign.target_groups.add(target_group1)
+
+        # Test campaign not launched
+        self.assertFalse(campaign.is_launched)
+
+
+        self.client.login(username='admin', password='supertest')
+        url = reverse('campaign_dashboard', args=(campaign.pk,))
+        resp = self.client.get(url)
+        self.assertEqual(resp.status_code, 404)
+
+        # Launch campaign
         self.run_jobs()
 
         url = reverse('campaign_dashboard', args=(campaign.pk,))
-        self.client.login(username='admin', password='supertest')
         resp = self.client.get(url)
         self.assertEqual(resp.status_code, 200)
 
