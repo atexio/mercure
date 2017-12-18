@@ -23,13 +23,22 @@
 
         <tbody>
             {% for object in object_list %}
-                <tr id="campaign_{{ object.pk }}" onclick="document.location = '{{ url('campaign_dashboard', args=(object.pk,)) }}'" style="cursor: pointer">
+                <tr id="campaign_{{ object.pk }}"
+                    {% if object.is_launched %}
+                    data-href="{{ url('campaign_dashboard', args=(object.pk,)) }}"
+                    {% endif %}>
                     <td>{{ object }}</td>
                     <td>{{ object.created_at }}</td>
                     <td>
                         <div class="btn-group pull-right">
+
                             <a class="btn btn-info" id="edit_campaign_{{ object.pk }}"
-                               href="{{ url('campaign_dashboard', args=(object.pk,)) }}" role="button">
+                               {% if not object.is_launched %}
+                                disabled
+                               {% else %}
+                                href="{{ url('campaign_dashboard', args=(object.pk,)) }}"
+                               {% endif %}
+                               role="button">
                                 <span class="glyphicon glyphicon-book"></span>
                                 {% trans %}Report{% endtrans %}
                             </a>

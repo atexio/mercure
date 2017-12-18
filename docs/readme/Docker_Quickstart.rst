@@ -5,66 +5,108 @@ Requirements
 ------------
 
 -  docker
+-  docker-compose
 
 Available configuration
 -----------------------
 
-+------------------+--------+----------------------------+----------------------+
-| Environment      | Status | Description                | Value example        |
-| variable name    |        |                            |                      |
-+==================+========+============================+======================+
-| SECRET\_KEY      | Requir | Django secret key          | Random string        |
-|                  | ed     |                            |                      |
-+------------------+--------+----------------------------+----------------------+
-| URL              | Requir | Mercure URL                | https://mercure.exam |
-|                  | ed     |                            | p                    |
-|                  |        |                            | le.com               |
-+------------------+--------+----------------------------+----------------------+
-| EMAIL\_HOST      | Requir | SMTP server                | mail.example.com     |
-|                  | ed     |                            |                      |
-+------------------+--------+----------------------------+----------------------+
-| EMAIL\_PORT      | Option | SMTP port                  | 587                  |
-|                  | al     |                            |                      |
-+------------------+--------+----------------------------+----------------------+
-| EMAIL\_HOST\_USE | Option | SMTP user                  | phishing@example.com |
-| R                | al     |                            |                      |
-+------------------+--------+----------------------------+----------------------+
-| EMAIL\_HOST\_PAS | Option | SMTP password              | P@SSWORD             |
-| SWORD            | al     |                            |                      |
-+------------------+--------+----------------------------+----------------------+
-| DEBUG            | Option | Run on debug mode          | True                 |
-|                  | al     |                            |                      |
-+------------------+--------+----------------------------+----------------------+
-| SENTRY\_DSN      | Option | Send debug info to         | https://23xxx:38xxx@ |
-|                  | al     | sentry.io                  | s                    |
-|                  |        |                            | entry.io/1234        |
-+------------------+--------+----------------------------+----------------------+
-| AXES\_LOCK\_OUT  | Option | Ban on forcebrute login    | True                 |
-| \_AT\_FAILURE    | al     |                            |                      |
-+------------------+--------+----------------------------+----------------------+
-| AXES\_COOLOFF\_T | Option | Ban duration on forcebrute | 0.8333               |
-| IME              | al     | login (in hours)           |                      |
-+------------------+--------+----------------------------+----------------------+
-| DONT\_SERVES\_ST | Option | Don't serve static files   | True                 |
-| ATIC\_FILE       | al     | with django                |                      |
-+------------------+--------+----------------------------+----------------------+
++-------------------+------+-----------------+-----------------------+
+| Environment       | Stat | Description     | Value example         |
+| variable name     | us   |                 |                       |
++===================+======+=================+=======================+
+| SECRET_KEY        | Requ | Django secret   | Random string         |
+|                   | ired | key             |                       |
++-------------------+------+-----------------+-----------------------+
+| URL               | Requ | Mercure URL     | https://mercure.examp |
+|                   | ired |                 | le.com                |
++-------------------+------+-----------------+-----------------------+
+| EMAIL_HOST        | Requ | SMTP server     | mail.example.com      |
+|                   | ired |                 |                       |
++-------------------+------+-----------------+-----------------------+
+| EMAIL_PORT        | Opti | SMTP port       | 587                   |
+|                   | onal |                 |                       |
++-------------------+------+-----------------+-----------------------+
+| EMAIL_HOST_USER   | Opti | SMTP user       | phishing@example.com  |
+|                   | onal |                 |                       |
++-------------------+------+-----------------+-----------------------+
+| EMAIL_HOST_PASSWO | Opti | SMTP password   | P@SSWORD              |
+| RD                | onal |                 |                       |
++-------------------+------+-----------------+-----------------------+
+| REDIS_HOST        | Opti | Redis server    | 127.0.0.1             |
+|                   | onal |                 |                       |
++-------------------+------+-----------------+-----------------------+
+| REDIS_PORT        | Opti | Redis port      | 6379                  |
+|                   | onal |                 |                       |
++-------------------+------+-----------------+-----------------------+
+| DEBUG             | Opti | Run on debug    | True                  |
+|                   | onal | mode            |                       |
++-------------------+------+-----------------+-----------------------+
+| SENTRY_DSN        | Opti | Send debug info | https://23xxx:38xxx@s |
+|                   | onal | to sentry.io    | entry.io/1234         |
++-------------------+------+-----------------+-----------------------+
+| AXES_LOCK_OUT_AT_ | Opti | Ban on          | True                  |
+| FAILURE           | onal | forcebrute      |                       |
+|                   |      | login           |                       |
++-------------------+------+-----------------+-----------------------+
+| AXES_COOLOFF_TIME | Opti | Ban duration on | 0.8333                |
+|                   | onal | forcebrute      |                       |
+|                   |      | login (in       |                       |
+|                   |      | hours)          |                       |
++-------------------+------+-----------------+-----------------------+
+| DONT_SERVES_STATI | Opti | Don’t serve     | True                  |
+| C_FILE            | onal | static files    |                       |
+|                   |      | with django     |                       |
++-------------------+------+-----------------+-----------------------+
 
 Sample deployment
 -----------------
 
+.. code:: yaml
+
+    version: '2'
+
+    services:
+      redis:
+        image: redis
+        restart: always
+        volumes:
+          - /etc/localtime:/etc/localtime:ro
+      front:
+        image: synhackfr/mercure
+        restart: always
+        links:
+          - redis:redis
+        ports:
+          - 8000:8000
+        volumes:
+          - ./data/db:/usr/src/app/data
+          - ./data/media:/usr/src/app/media
+          - /etc/localtime:/etc/localtime:ro
+        environment:
+          - SECRET_KEY=<random value>
+          - EMAIL_HOST=mail.example.com
+          - EMAIL_PORT=587
+          - EMAIL_HOST_USER=phishing@example.com
+          - EMAIL_HOST_PASSWORD=P@SSWORD
+
+To generate the SECRET_KEY variable, you can use this command:
+
 .. code:: shell
 
-    # create container
-    docker run \
-        -d \
-        --name=mercure \
-        -e SECRET_KEY=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 200 | head -n 1) \
-        -e URL=https://mercure.example.com \
-        -e EMAIL_HOST=mail.example.com \
-        -e EMAIL_PORT=587 \
-        -e EMAIL_HOST_USER=phishing@example.com \
-        -e EMAIL_HOST_PASSWORD=P@SSWORD \
-        synhackfr/mercure
+    # generate random SECRET_KEY
+    cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 200 | head -n 1
+
+The SECRET_KEY is used as a salt for django password hashing, don’t
+change it after using it with mercure. After changing the secret key,
+you can run the container with this command:
+
+.. code:: shell
+
+    docker-compose up -d
+
+Next, you can create a super user to log into web interface:
+
+.. code:: bash
 
     # create super user
-    docker exec -it mercure python manage.py createsuperuser
+    docker-compose exec front python manage.py createsuperuser

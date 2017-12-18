@@ -34,7 +34,9 @@ INSTALLED_APPS = [
 
     # contrib app
     'bootstrapform',
+    'datetimewidget',
     'rest_framework',
+    'django_rq',
     'sphinx',
 
     # django
@@ -131,9 +133,7 @@ LANGUAGE_CODE = 'en'
 TIME_ZONE = 'UTC'
 
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
 
 ugettext = lambda s: s
@@ -164,8 +164,19 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'phishing_cc.authentication.TargetTokenAuth',
-    ),
     'PAGE_SIZE': 10,
+}
+
+CACHES = {
+    'default': {
+        'BACKEND': 'redis_cache.cache.RedisCache',
+        'LOCATION': '%s:%s' % (os.environ.get('REDIS_HOST', 'localhost'),
+                               os.environ.get('REDIS_PORT', '6379')),
+    },
+}
+
+RQ_QUEUES = {
+    'default': {
+        'USE_REDIS_CACHE': 'default',
+    },
 }

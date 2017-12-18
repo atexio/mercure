@@ -11,10 +11,11 @@ from selenium.webdriver.support.ui import Select
 
 from phishing.models import Campaign, TargetGroup, LandingPage, EmailTemplate
 from phishing.tests.constant import FIXTURE_PATH
+from phishing.tests.helpers import RQMixin
 
 
 @tag('selenium')
-class SeleniumTestCase(StaticLiveServerTestCase):
+class SeleniumTestCase(RQMixin, StaticLiveServerTestCase):
     fixtures = [
         os.path.join(FIXTURE_PATH, 'landing_page.json'),
         os.path.join(FIXTURE_PATH, 'target.json'),
@@ -59,6 +60,8 @@ class SeleniumTestCase(StaticLiveServerTestCase):
         self.fast_multiselect('id_email_template', template)
         self.fast_multiselect('id_target_groups', target)
         self.drv.find_element_by_id('id_name').submit()
+        self.run_jobs()
+
 
     def fast_multiselect(self, element_id, labels):
         select = Select(self.drv.find_element_by_id(element_id))

@@ -1,7 +1,7 @@
 FROM python:3-alpine
 
 # To handle buildable attachments and compile cchardet
-RUN apk update && apk add --no-cache zip unzip g++ libc-dev
+RUN apk update && apk add --no-cache zip unzip g++ libc-dev supervisor
 
 # Do like debian "onbuild" versions
 RUN mkdir -p /usr/src/app
@@ -13,7 +13,8 @@ COPY . /usr/src/app
 # prepare django
 RUN python manage.py makemigrations
 RUN python manage.py collectstatic --noinput
+RUN mkdir /etc/supervisor.d && cp docker/django.ini /etc/supervisor.d/
 
 # start django
 EXPOSE 8000
-CMD python manage.py migrate && python manage.py runserver 0.0.0.0:8000
+CMD python manage.py migrate && supervisord -n

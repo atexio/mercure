@@ -18,6 +18,8 @@ Mercure is a tool for security managers who want to teach their colleagues about
 * Let you keep track in the Campaign dashboard
 * Track email reads, landing page visits and attachment execution.
 * Harvest credentials
+* Schedule campaigns
+* Minimize link in email templates
 
 
 ## What Mercure will do:
@@ -33,6 +35,7 @@ Mercure is a tool for security managers who want to teach their colleagues about
 ## Requirements
 
 * docker
+* docker-compose
 
 ## Available configuration
 
@@ -44,6 +47,8 @@ Mercure is a tool for security managers who want to teach their colleagues about
 | EMAIL_PORT                | Optional | SMTP port                                   | 587                                |
 | EMAIL_HOST_USER           | Optional | SMTP user                                   | phishing@example.com               |
 | EMAIL_HOST_PASSWORD       | Optional | SMTP password                               | P@SSWORD                           |
+| REDIS_HOST                | Optional | Redis server                                | 127.0.0.1                          |
+| REDIS_PORT                | Optional | Redis port                                  | 6379                               |
 | DEBUG                     | Optional | Run on debug mode                           | True                               |
 | SENTRY_DSN                | Optional | Send debug info to sentry.io                | https://23xxx:38xxx@sentry.io/1234 |
 | AXES_LOCK_OUT_AT_FAILURE  | Optional | Ban on forcebrute login                     | True                               |
@@ -53,33 +58,65 @@ Mercure is a tool for security managers who want to teach their colleagues about
 
 ## Sample deployment
 
-```shell
-# create container
-docker run \
-    -d \
-    --name=mercure \
-    -e SECRET_KEY=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 200 | head -n 1) \
-    -e URL=https://mercure.example.com \
-    -e EMAIL_HOST=mail.example.com \
-    -e EMAIL_PORT=587 \
-    -e EMAIL_HOST_USER=phishing@example.com \
-    -e EMAIL_HOST_PASSWORD=P@SSWORD \
-    synhackfr/mercure
+```yaml
+version: '2'
 
-# create super user
-docker exec -it mercure python manage.py createsuperuser
+services:
+  redis:
+    image: redis
+    restart: always
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+  front:
+    image: synhackfr/mercure
+    restart: always
+    links:
+      - redis:redis
+    ports:
+      - 8000:8000
+    volumes:
+      - ./data/db:/usr/src/app/data
+      - ./data/media:/usr/src/app/media
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - SECRET_KEY=<random value>
+      - EMAIL_HOST=mail.example.com
+      - EMAIL_PORT=587
+      - EMAIL_HOST_USER=phishing@example.com
+      - EMAIL_HOST_PASSWORD=P@SSWORD
 ```
 
+To generate the SECRET_KEY variable, you can use this command:
+
+```shell
+# generate random SECRET_KEY
+cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 200 | head -n 1
+```
+
+The SECRET_KEY is used as a salt for django password hashing, don't change it after using it with mercure.
+After changing the secret key, you can run the container with this command:
+
+```shell
+docker-compose up -d
+```
+
+Next, you can create a super user to log into web interface:
+
+```bash
+# create super user
+docker-compose exec front python manage.py createsuperuser
+```
 
 # Git Quickstart
 
 ## Requirements
 
-* python3
+* python >= 3.5
 * pip
 
-
 ## Deployment
+
+At first remember that Mercure is only compatible with Python 3. When using pip and manage.py ensure that ```pip -V``` and ```python -V``` are Python3 versions. You can use *virtualenv* to define python 3 as the default version for a project without changing system wide version
 
 ```
 git clone git@github.com:synhack/mercure.git && cd mercure
@@ -88,17 +125,21 @@ pip install -r requirements.txt
 ./manage.py migrate
 ./manage.py collectstatic
 ./manage.py createsuperuser
-./manage.py runserver
-```
 
+# In three different tabs
+./manage.py runserver
+./manage.py rqworker default
+./manage.py rqscheduler
+```
 
 # How to use mercure
 
-We can consider mercure is divide between 4 categories :
+We can consider mercure is divided into 5 steps :
 * Targets
 * Email Templates
-* Attachments and landing page
 * Campaigns
+* Attachments
+* Landing page
 
 Targets, Email Templates and Campaign are the minimum required to run a basic phishing campaign.
 
@@ -160,8 +201,8 @@ Targets, Email Templates and Campaign are the minimum required to run a basic ph
 
 4. Run unnittests
 	```
-	docker run --net=host selenium/standalone-chrome:3.0.1-carbon
-	python manage.py test
+    docker run --name redis -d -p 6379:6379 redis
+	python manage.py test --exclude-tag selenium
 	```
 
 5. Perform a pull request
@@ -194,4 +235,4 @@ Send an email to 'security@synhack.fr'. If you want, you can use with [PGP Key](
 
 
 ## Technical details
-* More technical details. 
+* More technical details.

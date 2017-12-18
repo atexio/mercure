@@ -1,5 +1,6 @@
 from django.db.models import BooleanField, CharField, DateTimeField, \
     ForeignKey, ManyToManyField, Model, CASCADE
+from django.utils.timezone import now
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -7,13 +8,15 @@ class Campaign(Model):
     """
         Send phishing campaign.
 
-        :param created_at(DateTimeField): Date format to know when the campain
+        :param created_at(DateTimeField): Date format to know when the campaign
                                             be created
         :param email_template(ForeignKey): Link to :func:`email template class
                                 <phishing.models.email_tempalte.EmailTemplate>`
         :param name(CharField): Name of the campaign in mercure interface
         :param target_groups(ManyToManyField): Link to :func:`target group
                                 class  <phishing.models.target.TargetGroup>`
+        :param send_at(DateTimeFIeld): Date format to know when the campaign
+                                        will be launched.
         :param dropper_unique(BooleanField): Boolean to know if the dropper is
                                             unique
         :param minimize_url(BooleanField): Boolean to set if url need to be
@@ -30,6 +33,7 @@ class Campaign(Model):
                                 on_delete=CASCADE)
     name = CharField(_('Campaign name'), max_length=128)
     target_groups = ManyToManyField('TargetGroup', related_name='campaigns')
+    send_at = DateTimeField(default=now)
 
     # app config
     minimize_url = BooleanField(_('Minimize url in email'), default=False)
@@ -52,6 +56,13 @@ class Campaign(Model):
             :return text: Print the name of the campaign
         """
         return self.name
+
+
+    @property
+    def is_launched(self):
+        if self.send_at < now():
+            return True
+        return False
 
 # TODO: sortir la conf smtp => faire un model
 #

@@ -11,9 +11,10 @@ from phishing.models import LandingPage, Campaign, TargetGroup, Tracker, \
 from phishing.strings import POST_DOMAIN, TRACKER_LANDING_PAGE_POST, \
     POST_TRACKER_ID
 from phishing.tests.constant import FILES_PATH, FIXTURE_PATH
+from phishing.tests.helpers import RQMixin
 
 
-class LandingPageTestCase(TestCase):
+class LandingPageTestCase(RQMixin, TestCase):
     fixtures = [
         os.path.join(FIXTURE_PATH, 'target.json'),
         os.path.join(FIXTURE_PATH, 'user.json'),
@@ -366,6 +367,7 @@ class LandingPageTestCase(TestCase):
         )
         target_grp = TargetGroup.objects.get(pk=1)
         camp.target_groups.add(target_grp)
+        self.run_jobs()
 
         # We check that the trackers has been created with the campaign
         qs = camp.trackers.filter(key='landing_page_open')
@@ -423,6 +425,7 @@ class LandingPageTestCase(TestCase):
         )
         target_grp = TargetGroup.objects.get(pk=1)
         camp.target_groups.add(target_grp)
+        self.run_jobs()
 
         # Remove tracker post to see if page load anymore
         Tracker.objects.filter(
@@ -466,6 +469,7 @@ class LandingPageTestCase(TestCase):
         )
         target_grp = TargetGroup.objects.get(pk=1)
         camp.target_groups.add(target_grp)
+        self.run_jobs()
 
         tracker = camp.trackers.filter(key='landing_page_open').first()
 
@@ -503,6 +507,7 @@ class LandingPageTestCase(TestCase):
         )
         target_grp = TargetGroup.objects.get(pk=1)
         camp.target_groups.add(target_grp)
+        self.run_jobs()
 
         tracker_post = Tracker.objects.filter(
             campaign_id=camp.pk,

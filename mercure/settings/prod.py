@@ -4,7 +4,7 @@ from django.conf import global_settings
 from .base import *
 
 # django config
-SECRET_KEY = os.environ['SECRET_KEY']
+SECRET_KEY = os.environ.get('SECRET_KEY')
 DEBUG = 'DEBUG' in os.environ
 
 # mercure config
@@ -27,6 +27,14 @@ EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'False') \
     .lower() in ['true', '1', 't', 'y', 'yes']
 EMAIL_USE_SSL = os.environ.get('EMAIL_USE_SSL', 'False') \
     .lower() in ['true', '1', 't', 'y', 'yes']
+
+CACHES = {
+    'default': {
+        'BACKEND': 'redis_cache.cache.RedisCache',
+        'LOCATION': '%s:%s' % (os.environ.get('REDIS_HOST', 'redis'),
+                               os.environ.get('REDIS_PORT', '6379')),
+    },
+}
 
 # sentry.io (send error to platform)
 if 'SENTRY_DSN' in os.environ:
