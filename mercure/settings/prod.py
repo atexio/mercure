@@ -4,7 +4,7 @@ from django.conf import global_settings
 from .base import *
 
 # django config
-SECRET_KEY = os.environ['SECRET_KEY']
+SECRET_KEY = os.environ.get('SECRET_KEY')
 DEBUG = 'DEBUG' in os.environ
 
 # mercure config

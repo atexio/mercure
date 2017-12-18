@@ -64,18 +64,22 @@ version: '2'
 services:
   redis:
     image: redis
-    restart: always  
+    restart: always
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
   front:
-    build: .
     image: synhackfr/mercure
     restart: always
     links:
       - redis:redis
     ports:
       - 8000:8000
+    volumes:
+      - ./data/db:/usr/src/app/data
+      - ./data/media:/usr/src/app/media
+      - /etc/localtime:/etc/localtime:ro
     environment:
       - SECRET_KEY=<random value>
-      - REDIS_HOST=redis
       - EMAIL_HOST=mail.example.com
       - EMAIL_PORT=587
       - EMAIL_HOST_USER=phishing@example.com
@@ -90,6 +94,12 @@ cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 200 | head -n 1
 ```
 
 The SECRET_KEY is used as a salt for django password hashing, don't change it after using it with mercure.
+After changing the secret key, you can run the container with this command:
+
+```shell
+docker-compose up -d
+```
+
 Next, you can create a super user to log into web interface:
 
 ```bash
@@ -115,9 +125,12 @@ pip install -r requirements.txt
 ./manage.py migrate
 ./manage.py collectstatic
 ./manage.py createsuperuser
-./manage.py runserver
-```
 
+# In three different tabs
+./manage.py runserver
+./manage.py rqworker default
+./manage.py rqscheduler
+```
 
 # How to use mercure
 
@@ -188,9 +201,8 @@ Targets, Email Templates and Campaign are the minimum required to run a basic ph
 
 4. Run unnittests
 	```
-	docker run --net=host selenium/standalone-chrome:3.0.1-carbon
-  docker run
-	python manage.py test
+    docker run --name redis -d -p 6379:6379 redis
+	python manage.py test --exclude-tag selenium
 	```
 
 5. Perform a pull request
