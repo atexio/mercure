@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.contrib.staticfiles.storage import staticfiles_storage
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils import translation
 from django.template.defaultfilters import slugify
 from jinja2 import Environment

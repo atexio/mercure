@@ -1,5 +1,5 @@
 from django.db.models import BooleanField, CharField, DateTimeField, \
-    ForeignKey, ManyToManyField, Model
+    ForeignKey, ManyToManyField, Model, CASCADE
 from django.utils.timezone import now
 from django.utils.translation import ugettext_lazy as _
 
@@ -29,7 +29,8 @@ class Campaign(Model):
 
     # global infos
     created_at = DateTimeField(auto_now_add=True)
-    email_template = ForeignKey('EmailTemplate', related_name='campaigns')
+    email_template = ForeignKey('EmailTemplate', related_name='campaigns',
+                                on_delete=CASCADE)
     name = CharField(_('Campaign name'), max_length=128)
     target_groups = ManyToManyField('TargetGroup', related_name='campaigns')
     send_at = DateTimeField(default=now)
