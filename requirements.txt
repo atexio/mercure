@@ -11,7 +11,7 @@ django-datetime-widget==0.9.3
 django-redis-cache==1.7.1
 rq==0.9.0
 rq-scheduler==0.7.0
-django-rq==0.9.6
+django-rq==1.0.1
 
 # Debugging
 raven==6.4.0
