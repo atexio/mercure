@@ -11,10 +11,6 @@ To participate to the project :
 3. Make comments and clean commits to the repository
 
 4. Run unnittests
-
-   ::
-
-       docker run --net=host selenium/standalone-chrome:3.0.1-carbon
-       python manage.py test
+   ``docker run --name redis -d -p 6379:6379 redis  python manage.py test --exclude-tag selenium``
 
 5. Perform a pull request

@@ -17,6 +17,8 @@ What Mercure can do:
 -  Let you keep track in the Campaign dashboard
 -  Track email reads, landing page visits and attachment execution.
 -  Harvest credentials
+-  Schedule campaigns
+-  Minimize link in email templates
 
 What Mercure will do:
 ---------------------
