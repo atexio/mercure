@@ -21,6 +21,6 @@ install:
 
 script:
   - python manage.py makemigrations
-  - coverage run --source=phishing manage.py test
+  - coverage run --source=phishing manage.py test -v 2
 
 after_success: coveralls
