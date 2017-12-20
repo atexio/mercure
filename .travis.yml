@@ -18,9 +18,14 @@ cache: pip
 install:
   - pip install -r requirements.txt
   - pip install coveralls
+  - pip install flake8
+
+before_script:
+  - flake8 --exclude migrations,settings
 
 script:
   - python manage.py makemigrations
   - coverage run --source=phishing manage.py test -v 2
+  - ./manage.py makemigrations && pip install mock && python manage.py test axes --settings=axes.test_settings
 
 after_success: coveralls
