@@ -62,7 +62,6 @@ class SeleniumTestCase(RQMixin, StaticLiveServerTestCase):
         self.drv.find_element_by_id('id_name').submit()
         self.run_jobs()
 
-
     def fast_multiselect(self, element_id, labels):
         select = Select(self.drv.find_element_by_id(element_id))
         for label in labels:

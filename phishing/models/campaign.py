@@ -57,7 +57,6 @@ class Campaign(Model):
         """
         return self.name
 
-
     @property
     def is_launched(self):
         if self.send_at < now():
