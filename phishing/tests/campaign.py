@@ -81,7 +81,6 @@ class CampaignTestCase(RQMixin, TestCase):
             resp = self.client.get(url)
             self.assertEqual(resp.status_code, 200)
 
-
     def test_dashboard_campaign_target_groups(self):
         # add landing page
         landing_page = LandingPage.objects.create(

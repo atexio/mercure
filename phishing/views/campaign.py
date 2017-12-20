@@ -24,8 +24,9 @@ class CreateCampaign(PermissionRequiredMixin, CreateView):
 
     permission_required = 'add_campaign'
     model = Campaign
-    fields = ('name', 'email_template', 'target_groups', 'send_at', 'smtp_host',
-              'smtp_username', 'smtp_password', 'smtp_use_ssl', 'minimize_url')
+    fields = ('name', 'email_template', 'target_groups', 'send_at',
+              'smtp_host', 'smtp_username', 'smtp_password', 'smtp_use_ssl',
+              'minimize_url')
     success_url = reverse_lazy('campaign_list')
 
     def get_form(self, form_class=None):
