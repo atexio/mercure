@@ -1,4 +1,3 @@
-from django.test import TestCase
 from django_rq import get_connection, get_scheduler, get_queue
 
 
