@@ -170,8 +170,7 @@ REST_FRAMEWORK = {
 CACHES = {
     'default': {
         'BACKEND': 'redis_cache.cache.RedisCache',
-        'LOCATION': '%s:%s' % (os.environ.get('REDIS_HOST', 'localhost'),
-                               os.environ.get('REDIS_PORT', '6379')),
+        'LOCATION': os.environ.get('REDIS_PORT', 'tcp://localhost:6379'),
     },
 }
 
