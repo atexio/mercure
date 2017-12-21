@@ -22,7 +22,7 @@ before_install:
   - docker build -t mercure .
   - docker run -d --name redis redis
   - docker run -d --name mercure --link=redis:redis -e 'SECRET_KEY=unit_test' mercure
-  - docker exec -i mercure python manage.py test
+  - docker exec -i mercure python manage.py test --exclude-tag selenium
 
 install:
   - pip install -r requirements.txt
