@@ -437,6 +437,7 @@ class LandingPageTestCase(RQMixin, TestCase):
         # We go to the landing page
         # The HTTP_HOST is mandatory to generate form "action"
         tracker = camp.trackers.filter(key='landing_page_open').first()
+        self.assertIsNotNone(tracker)
         resp = self.client.get(
             reverse('landing_page', args=(tracker.uuid,)),
             HTTP_HOST='foo.com')
@@ -474,6 +475,7 @@ class LandingPageTestCase(RQMixin, TestCase):
         tracker = camp.trackers.filter(key='landing_page_open').first()
 
         # set incorrect value for make crash
+        self.assertIsNotNone(tracker)
         tracker.campaign_id = 99999999
         tracker.save()
 
@@ -521,6 +523,7 @@ class LandingPageTestCase(RQMixin, TestCase):
             'mercure_real_action_url': 'http://foo.com',
             'mercure_redirect_url': target
         }
+        self.assertIsNotNone(tracker_post)
         resp = self.client.post(reverse('landing_page_post',
                                         args=(tracker_post.pk,)), data=data)
         self.assertEqual(resp.status_code, 200)

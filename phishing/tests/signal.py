@@ -140,6 +140,7 @@ class LandingPageSignalTestCase(RQMixin, TestCase):
         campaign.target_groups.add(target_group)
         self.run_jobs()
 
+        self.assertGreater(len(mail.outbox), 0, mail.outbox)
         landing_page_url = mail.outbox[-1].body.split('<')[0]
 
         # call landing page ans test result
@@ -240,6 +241,7 @@ class CampaignSignalTestCase(RQMixin, TestCase):
         campaign.target_groups.add(target_group)
         self.run_jobs()
 
+        self.assertGreater(len(mail.outbox), 0, mail.outbox)
         self.assertEqual(mail.outbox[-1].body, 'Hello!')
         mail_html = mail.outbox[-1].alternatives[0][0]
         self.assertEqual(mail_html.split('<')[0], 'Hi!')
@@ -306,6 +308,7 @@ class TargetActionSignalTestCase(RQMixin, TestCase):
 
         # call tracker
         self.send_campaign()
+        self.assertGreater(len(mail.outbox), 0, mail.outbox)
         attachment = json.loads(mail.outbox[-1].attachments[0][1].decode())
         tracker_url = attachment['tracker_url']
 
@@ -333,6 +336,7 @@ class TargetActionSignalTestCase(RQMixin, TestCase):
 
         # call tracker
         self.send_campaign()
+        self.assertGreater(len(mail.outbox), 0, mail.outbox)
         attachment = json.loads(mail.outbox[-1].attachments[0][1].decode())
         tracker_url = attachment['tracker_url']
 
@@ -359,6 +363,7 @@ class TargetActionSignalTestCase(RQMixin, TestCase):
 
         # call tracker
         self.send_campaign()
+        self.assertGreater(len(mail.outbox), 0, mail.outbox)
         mail_html = mail.outbox[-1].alternatives[0][0]
         tracker_url = mail_html.split('src="')[-1].split('"')[0]
 
@@ -386,6 +391,7 @@ class TargetActionSignalTestCase(RQMixin, TestCase):
 
         # call tracker
         self.send_campaign()
+        self.assertGreater(len(mail.outbox), 0, mail.outbox)
         tracker_url = mail.outbox[-1].body
 
         # test if handler has call
@@ -446,6 +452,7 @@ class TargetActionSignalTestCase(RQMixin, TestCase):
 
         # call tracker
         self.send_campaign()
+        self.assertGreater(len(mail.outbox), 0, mail.outbox)
         tracker_url = mail.outbox[-1].body
 
         # call landing page

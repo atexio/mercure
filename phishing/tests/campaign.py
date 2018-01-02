@@ -415,6 +415,7 @@ class CampaignTestCase(RQMixin, TestCase):
         self.run_jobs()
 
         # check minified url
+        self.assertGreater(len(mail.outbox), 0, mail.outbox)
         self.assertIn('click: http://tinyurl.com/',
                       str(mail.outbox[-1].message()))
 
