@@ -20,7 +20,7 @@ cache: pip
 before_install:
   - docker build -t mercure .
   - docker run -d --name redis redis
-  - docker run --link=redis:redis -e 'SECRET_KEY=unit_test' mercure ./manage.py test
+  - docker run --link=redis:redis -e 'SECRET_KEY=unit_test' mercure ./manage.py test --exclude-tag=selenium
 
 install:
   - pip install -r requirements.txt
