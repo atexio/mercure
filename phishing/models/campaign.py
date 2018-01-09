@@ -59,9 +59,7 @@ class Campaign(Model):
 
     @property
     def is_launched(self):
-        if self.send_at < now():
-            return True
-        return False
+        return self.trackers.count() > 0
 
 # TODO: sortir la conf smtp => faire un model
 #

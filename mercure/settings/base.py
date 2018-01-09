@@ -164,19 +164,17 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
-    'PAGE_SIZE': 10,
 }
 
 CACHES = {
     'default': {
         'BACKEND': 'redis_cache.cache.RedisCache',
-        'LOCATION': '%s:%s' % (os.environ.get('REDIS_HOST', 'localhost'),
-                               os.environ.get('REDIS_PORT', '6379')),
+        'LOCATION': os.environ.get('REDIS_PORT', 'tcp://localhost:6379'),
     },
 }
 
 RQ_QUEUES = {
     'default': {
-        'USE_REDIS_CACHE': 'default',
+        'URL': os.environ.get('REDIS_PORT', 'tcp://localhost:6379'),
     },
 }
