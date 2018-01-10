@@ -5,7 +5,6 @@ services:
     image: redis
     restart: always
   front:
-    build: .
     image: synhackfr/mercure
     restart: always
     links:
@@ -14,7 +13,6 @@ services:
       - 8000:8000
     environment:
       - SECRET_KEY=<random value>
-      - REDIS_HOST=redis
       - EMAIL_HOST=mail.example.com
       - EMAIL_PORT=587
       - EMAIL_HOST_USER=phishing@example.com
