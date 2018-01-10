@@ -28,7 +28,7 @@ cchardet==2.1.1
 requests==2.18.4
 
 # Utils
-django-model-utils==3.0.0
+django-model-utils==3.1.1
 pyshorteners==0.6.1
 pytz==2017.3
 unipath==1.1
