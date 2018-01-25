@@ -1,5 +1,6 @@
 services:
   - redis-server
+  - docker
 
 language: python
 
@@ -15,6 +16,11 @@ addons:
     secure: JJO4qqD8JTfcLUt3mX7/nzUodDawqPi+z1/au+83W3dhprw92yBJhU5MBGwW+wM7D+Y1prCDp/Gj63CTwbUhVsPPu44p4n5LilsgKPI+cJtdCkhSAbf2PHzd0IlCd909hRN7fhqvo8wSuxE5fX9kevt4Jj5NiX7TyTnXsJHSCqxNcTUvCbQaWa0TnRq3QnFgfQK/Dp2kQ6QEofVKcPcrfdYoUWyl9NT6ZZkjp5aLNVvWZOvBcRI8dd5MsVQowL0KPOlY4uJf9KUrI0sX7B6P/WJD0UrBFhzfBmuoPfGiSL+DA7i98c8Wn37KpGBLHPxwa32puOUjayBm+7xFxWK0yqKdrOVlEDiY2qfHhEn9aBuhOKS2/7RcANFuEhCQT7+0ldwrCKNIWzs7rgdwBe+1zLMCyq7ysqq0cPohh6NRaMoTEv1kL4LIOS9U9Op+iYxs/jWMhyonBkHpsQZIu7eFzOwZ1TCB18XkL3ipJJAUjf4Gpq1z53iSjiFNQImMLSvEt2CxO5pSrG9H4Nre8xaU4cjCTFek5fTwG2hE5PYtq3Pusi4WdOh7du81ad20ZmtQhWEsjwAXe2xl37xxbWEWfXv3wqkcyN2OcPJl7iMNJdA0ZuDtmGHCeqU8AlfEJukPU8RpSPo7oKN6HPubOAEelJ1eCWIWoiHXJFRScn41kw8=
 
 cache: pip
+
+before_install:
+  - docker build -t mercure .
+  - docker run -d --name redis redis
+  - docker run --link=redis:redis -e 'SECRET_KEY=unit_test' mercure ./manage.py test --exclude-tag=selenium
 
 install:
   - pip install -r requirements.txt

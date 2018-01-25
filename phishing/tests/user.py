@@ -3,11 +3,13 @@ from django.contrib.auth.models import Permission
 from django.urls import reverse
 from django.test import TestCase
 
-from phishing.models import Campaign, EmailTemplate
+from phishing.models import Campaign, EmailTemplate, TargetGroup, Target
+from phishing.tests.helpers import RQMixin
 
 
-class PermissionTestCase(TestCase):
+class PermissionTestCase(RQMixin, TestCase):
     def setUp(self):
+        super(PermissionTestCase, self).setUp()
         self.client.get('not-found')  # django fix: first client call is 404
 
     def test_default_permission(self):
@@ -35,6 +37,13 @@ class PermissionTestCase(TestCase):
         campaign = Campaign.objects.create(name='test 1', **campaign_infos)
         Campaign.objects.create(name='test 2', **campaign_infos)
         Campaign.objects.create(name='test 3', **campaign_infos)
+
+        # send campaign
+        target_group = TargetGroup.objects.create(name='targets')
+        Target.objects.create(email='test@test.com',
+                              group=target_group)
+        campaign.target_groups.add(target_group)
+        self.run_jobs()
 
         # can list campaign
         response = self.client.get(reverse('campaign_list'))
