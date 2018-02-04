@@ -1,0 +1,19 @@
+version: '2'
+
+services:
+  redis:
+    image: redis
+    restart: always
+  front:
+    image: synhackfr/mercure
+    restart: always
+    links:
+      - redis:redis
+    ports:
+      - 8000:8000
+    environment:
+      - SECRET_KEY=<random value>
+      - EMAIL_HOST=mail.example.com
+      - EMAIL_PORT=587
+      - EMAIL_HOST_USER=phishing@example.com
+      - EMAIL_HOST_PASSWORD=P@SSWORD
