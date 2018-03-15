@@ -3,7 +3,7 @@ django==2.0
 djangorestframework==3.7.3
 
 # Templates
-django-bootstrap-form==3.3
+django-bootstrap-form==3.4
 jinja2==2.10
 django-datetime-widget==0.9.3
 
