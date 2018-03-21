@@ -31,8 +31,8 @@ before_script:
   - flake8 --exclude migrations,settings
 
 script:
-  - python36 manage.py makemigrations
+  - python manage.py makemigrations
   - coverage run --source=phishing manage.py test
-  - python36 manage.py makemigrations && pip3 install mock && python36 manage.py test axes --settings=axes.test_settings
+  - python manage.py makemigrations && pip3 install mock && python manage.py test axes --settings=axes.test_settings
 
 after_success: coveralls
