@@ -31,8 +31,13 @@ EMAIL_USE_SSL = os.environ.get('EMAIL_USE_SSL', 'False') \
 CACHES = {
     'default': {
         'BACKEND': 'redis_cache.cache.RedisCache',
-        'LOCATION': '%s:%s' % (os.environ.get('REDIS_HOST', 'redis'),
-                               os.environ.get('REDIS_PORT', '6379')),
+        'LOCATION': os.environ.get('REDIS_PORT', 'tcp://redis:6379'),
+    },
+}
+
+RQ_QUEUES = {
+    'default': {
+        'URL': os.environ.get('REDIS_PORT', 'tcp://redis:6379'),
     },
 }
 
