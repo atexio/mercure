@@ -14,7 +14,7 @@ rq-scheduler==0.7.0
 django-rq==1.0.1
 
 # Debugging
-raven==6.4.0
+raven==6.7.0
 
 # Security
 django-axes==4.0.1
