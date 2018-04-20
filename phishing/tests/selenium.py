@@ -59,7 +59,7 @@ class SeleniumTestCase(StaticLiveServerTestCase):
         self.fast_multiselect('id_email_template', template)
         self.fast_multiselect('id_target_groups', target)
         self.drv.find_element_by_id('id_name').submit()
-        self.run_jobs()
+        Campaign.send_all()
 
     def fast_multiselect(self, element_id, labels):
         select = Select(self.drv.find_element_by_id(element_id))
