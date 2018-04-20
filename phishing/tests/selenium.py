@@ -11,11 +11,10 @@ from selenium.webdriver.support.ui import Select
 
 from phishing.models import Campaign, TargetGroup, LandingPage, EmailTemplate
 from phishing.tests.constant import FIXTURE_PATH
-from phishing.tests.helpers import RQMixin
 
 
 @tag('selenium')
-class SeleniumTestCase(RQMixin, StaticLiveServerTestCase):
+class SeleniumTestCase(StaticLiveServerTestCase):
     fixtures = [
         os.path.join(FIXTURE_PATH, 'landing_page.json'),
         os.path.join(FIXTURE_PATH, 'target.json'),

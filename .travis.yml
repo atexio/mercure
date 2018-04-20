@@ -1,5 +1,4 @@
 services:
-  - redis-server
   - docker
 
 language: python
@@ -27,7 +26,7 @@ install:
   - pip3 install flake8
 
 before_script:
-  - flake8 --exclude migrations,settings
+  - flake8 --exclude migrations,settings,scripts
 
 script:
   - python manage.py makemigrations
