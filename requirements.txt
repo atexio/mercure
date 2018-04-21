@@ -17,7 +17,7 @@ django-rq==1.0.1
 raven==6.4.0
 
 # Security
-django-axes==4.0.1
+django-axes==4.3.1
 
 # Data parsing
 beautifulsoup4==4.6.0
