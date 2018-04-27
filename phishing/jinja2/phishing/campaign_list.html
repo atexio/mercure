@@ -7,6 +7,7 @@
         <thead>
             <tr>
                 <th>{% trans %}Campaigns name{% endtrans %}</th>
+                <th>{% trans %}Created date{% endtrans %}</th>
                 <th>{% trans %}Launching date{% endtrans %}</th>
                 <th>
                     {% if request.user.has_perm('phishing.add_campaign') %}
@@ -28,7 +29,8 @@
                     data-href="{{ url('campaign_dashboard', args=(object.pk,)) }}"
                     {% endif %}>
                     <td>{{ object }}</td>
-                    <td>{{ object.created_at }}</td>
+                    <td>{{ object.created_at.strftime('%d/%m/%Y&nbsp;%Hh%M')|safe }}</td>
+                    <td>{{ object.send_at.strftime('%d/%m/%Y&nbsp;%Hh%M')|safe }}</td>
                     <td>
                         <div class="btn-group pull-right">
 

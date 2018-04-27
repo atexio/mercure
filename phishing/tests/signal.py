@@ -21,7 +21,6 @@ from phishing.strings import TRACKER_ATTACHMENT_EXECUTED, TRACKER_EMAIL_OPEN, \
 
 # helpers
 from phishing.tests.constant import FILES_PATH
-from phishing.tests.helpers import RQMixin
 
 
 class SearchListMixin(object):
@@ -109,7 +108,7 @@ class EmailTemplateSignalTestCase(TestCase, SearchListMixin):
         self.assertTrue(make_template_vars.disconnect(handler))
 
 
-class LandingPageSignalTestCase(RQMixin, TestCase):
+class LandingPageSignalTestCase(TestCase):
     def test_edit_on_call(self):
         # add value handler
         def handler(request, landing_page, **kwarg):
@@ -137,8 +136,8 @@ class LandingPageSignalTestCase(RQMixin, TestCase):
             name='test',
             email_template=email_template
         )
-        campaign.target_groups.add(target_group)
-        self.run_jobs()
+        campaign.target_groups_add(target_group)
+        self.assertTrue(campaign.send())
 
         landing_page_url = mail.outbox[-1].body.split('<')[0]
 
@@ -209,7 +208,7 @@ class MenuSignalTestCase(TestCase, SearchListMixin):
         self.assertTrue(make_menu.disconnect(handler))
 
 
-class CampaignSignalTestCase(RQMixin, TestCase):
+class CampaignSignalTestCase(TestCase):
     def test_edit_send_email(self):
         # add value handler
         def handler(email_template, **kwarg):
@@ -237,8 +236,8 @@ class CampaignSignalTestCase(RQMixin, TestCase):
             name='test',
             email_template=email_template
         )
-        campaign.target_groups.add(target_group)
-        self.run_jobs()
+        campaign.target_groups_add(target_group)
+        self.assertTrue(campaign.send())
 
         self.assertEqual(mail.outbox[-1].body, 'Hello!')
         mail_html = mail.outbox[-1].alternatives[0][0]
@@ -248,7 +247,7 @@ class CampaignSignalTestCase(RQMixin, TestCase):
         self.assertTrue(send_email.disconnect(handler))
 
 
-class TargetActionSignalTestCase(RQMixin, TestCase):
+class TargetActionSignalTestCase(TestCase):
     def send_campaign(self):
         # create campaign
         landing_page = LandingPage.objects.create(
@@ -286,8 +285,8 @@ class TargetActionSignalTestCase(RQMixin, TestCase):
             name='test',
             email_template=email_template
         )
-        campaign.target_groups.add(target_group)
-        self.run_jobs()
+        campaign.target_groups_add(target_group)
+        self.assertTrue(campaign.send())
 
         return campaign
 
@@ -470,7 +469,7 @@ class TargetActionSignalTestCase(RQMixin, TestCase):
         self.assertTrue(post_save.disconnect(handler, sender=TrackerInfos))
 
 
-class ReportSignalTestCase(RQMixin, TestCase):
+class ReportSignalTestCase(TestCase):
     def get(self):
         # create campaign
         landing_page = LandingPage.objects.create(
@@ -491,8 +490,8 @@ class ReportSignalTestCase(RQMixin, TestCase):
             name='test',
             email_template=email_template
         )
-        campaign.target_groups.add(target_group)
-        self.run_jobs()
+        campaign.target_groups_add(target_group)
+        self.assertTrue(campaign.send())
 
         # init
         user_infos = {'username': 'default', 'password': 'pass'}
