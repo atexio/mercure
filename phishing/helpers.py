@@ -1,23 +1,16 @@
-import copy
-import traceback
 import cchardet
 from datetime import datetime
 
 import bs4 as BeautifulSoup
 import requests
-from django.core.mail import EmailMultiAlternatives
-from django.core.mail.backends.smtp import EmailBackend
 from django.urls import reverse
-from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 from pyshorteners import Shortener
 
 from mercure.settings import HOSTNAME
-from phishing.signals import send_email, make_template_vars
-from phishing.strings import TRACKER_LANDING_PAGE_OPEN, \
-    TRACKER_LANDING_PAGE_POST, POST_TRACKER_ID, TRACKER_EMAIL_OPEN, \
-    TRACKER_EMAIL_SEND, POST_DOMAIN, TRACKER_ATTACHMENT_EXECUTED
-from .models import EmailTemplate, Target, Tracker
+from phishing.signals import make_template_vars
+from phishing.strings import TRACKER_LANDING_PAGE_OPEN, POST_TRACKER_ID, \
+    POST_DOMAIN
 
 
 def clone_url(url):
@@ -52,6 +45,7 @@ def get_template_vars(campaign=None, target=None, email_template=None):
     :param email_template: `.models.EmailTemplate`
     :return: template variable infos
     """
+    from .models import EmailTemplate, Tracker
 
     landing_page_url = ''
 
@@ -120,34 +114,6 @@ def get_template_vars(campaign=None, target=None, email_template=None):
                             campaign=campaign, target=target,
                             email_template=email_template)
     return vars_data
-
-
-def get_smtp_connection(campaign):
-    """Get SMTP connection.
-
-    :param campaign: `.models.Campaign`
-    :return: SMTP connection
-    """
-    if not campaign.smtp_host:
-        return None
-
-    options = {}
-    for attr in dir(campaign):
-        # get smtp infos
-        if attr.startswith('smtp_'):
-            index = attr.replace('smtp_', '')
-            value = getattr(campaign, attr)
-
-            # if port in host: extract port
-            if index == 'host' and ':' in value:
-                options['port'] = int(value.split(':')[-1])
-                value = value.split(':')[0]
-
-            # add value
-            if value:
-                options[index] = value
-
-    return EmailBackend(**options)
 
 
 def intercept_html_post(html, redirect_url=None):
@@ -230,128 +196,6 @@ def replace_template_vars(template, campaign=None, target=None,
             template = template.replace(name, value)
 
     return template
-
-
-def start_campaign(campaign):
-    """Start campaign (Send email).
-
-    :param campaign: `.models.Campaign`
-    """
-    email_template = campaign.email_template
-    landing_page = email_template.landing_page
-    smtp_connection = get_smtp_connection(campaign)
-
-    # send email
-    target_group_id = set([g.pk for g in campaign.target_groups.all()])
-    for target in Target.objects.filter(group_id__in=target_group_id):
-        # already send email ? (target in multiple group for example)
-        if Tracker.objects.filter(campaign_id=campaign.pk,
-                                  target__email=target.email).first():
-            continue
-
-        # add tracker helper function
-        def add_tracker(key, value, infos=None):
-            kwargs = {
-                'key': key,
-                'campaign': campaign,
-                'target': target,
-                'value': value,
-            }
-
-            if infos:
-                kwargs['infos'] = str(infos)
-
-            return Tracker.objects.create(**kwargs)
-
-        # replace template vars helper function
-        def replace_vars(content):
-            return replace_template_vars(content, campaign, target,
-                                         email_template)
-
-        # send email
-        try:
-            target_email = copy.deepcopy(email_template)
-            attachments = []
-
-            for attachment in email_template.attachments.all():
-                if attachment.buildable:
-                    tracker = add_tracker(TRACKER_ATTACHMENT_EXECUTED,
-                                          '%s: not executed' % attachment.name,
-                                          0)
-                    attachment_file = attachment.build(tracker)
-                else:
-                    attachment_file = attachment.file
-
-                attachments.append({
-                    'filename': attachment.attachment_name,
-                    'content': attachment_file.read()
-                })
-
-            # Signal for external app
-            send_email.send(sender=Tracker, campaign=campaign,
-                            target=target, email_template=target_email,
-                            smtp_connection=smtp_connection,
-                            attachments=attachments)
-
-            # email open tracker
-            if email_template.has_open_tracker:
-                tracker = add_tracker(TRACKER_EMAIL_OPEN, 'not opened', 0)
-
-                # get content (for empty check)
-                content = target_email.html_content
-                for r in ('html', 'head', 'title', 'body', '&nbsp;', '<', '/',
-                          '>'):
-                    content = content.replace(r, '')
-
-                # convert txt to html (if html is empty)
-                if not content.strip():
-                    target_email.html_content = render_to_string(
-                        'phishing/email/to_html.html', {
-                            'lines': target_email.text_content.split('\n')
-                        })
-
-                # get html code of tracking image
-                tracking_img = render_to_string(
-                    'phishing/email/tracker_image.html', {
-                        'tracker_id': str(tracker.pk),
-                        'host': HOSTNAME,
-                    })
-
-                # add tracking image in email
-                if '</body>' in target_email.html_content:
-                    target_email.html_content = target_email.html_content \
-                        .replace('</body>', '%s</body>' % tracking_img)
-
-                else:
-                    target_email.html_content += tracking_img
-
-            # landing page tracker
-            if landing_page:
-                add_tracker(TRACKER_LANDING_PAGE_OPEN, 'not opened', 0)
-
-                if POST_TRACKER_ID in landing_page.html:
-                    add_tracker(TRACKER_LANDING_PAGE_POST, 'no', 0)
-
-            mail = EmailMultiAlternatives(
-                subject=replace_vars(target_email.email_subject),
-                body=replace_vars(target_email.text_content),
-                from_email=target_email.from_email,
-                to=[target.email], connection=smtp_connection
-            )
-
-            if target_email.html_content:
-                mail.attach_alternative(
-                    replace_vars(target_email.html_content),
-                    'text/html')
-
-            for attachment in attachments:
-                mail.attach(**attachment)
-
-            mail.send(fail_silently=False)
-            add_tracker(TRACKER_EMAIL_SEND, 'success')
-
-        except Exception:
-            add_tracker(TRACKER_EMAIL_SEND, 'fail', traceback.format_exc())
 
 
 def to_hour_timestamp(datetime):

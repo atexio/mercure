@@ -1,5 +1,4 @@
 services:
-  - redis-server
   - docker
 
 language: python
@@ -16,18 +15,13 @@ addons:
 
 cache: pip
 
-before_install:
-  - docker build -t mercure .
-  - docker run -d --name redis redis
-  - docker run --link=redis:redis -e 'SECRET_KEY=unit_test' mercure python36 manage.py test --exclude-tag=selenium
-
 install:
   - pip3 install -r requirements.txt
   - pip3 install coveralls
   - pip3 install flake8
 
 before_script:
-  - flake8 --exclude migrations,settings
+  - flake8 --exclude migrations,settings,scripts
 
 script:
   - python manage.py makemigrations
