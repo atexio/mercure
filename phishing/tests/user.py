@@ -4,10 +4,9 @@ from django.urls import reverse
 from django.test import TestCase
 
 from phishing.models import Campaign, EmailTemplate, TargetGroup, Target
-from phishing.tests.helpers import RQMixin
 
 
-class PermissionTestCase(RQMixin, TestCase):
+class PermissionTestCase(TestCase):
     def setUp(self):
         super(PermissionTestCase, self).setUp()
         self.client.get('not-found')  # django fix: first client call is 404
@@ -42,8 +41,8 @@ class PermissionTestCase(RQMixin, TestCase):
         target_group = TargetGroup.objects.create(name='targets')
         Target.objects.create(email='test@test.com',
                               group=target_group)
-        campaign.target_groups.add(target_group)
-        self.run_jobs()
+        campaign.target_groups_add(target_group)
+        self.assertTrue(campaign.send())
 
         # can list campaign
         response = self.client.get(reverse('campaign_list'))

@@ -7,8 +7,13 @@
         </tr>
 
         <tr>
+            <th>{% trans %}Created date{% endtrans %}</th>
+            <td>{{ campaign.created_at.strftime('%d/%m/%Y&nbsp;%Hh%M')|safe }}</td>
+        </tr>
+
+        <tr>
             <th>{% trans %}Lanching date{% endtrans %}</th>
-            <td>{{ campaign.created_at }}</td>
+            <td>{{ campaign.send_at.strftime('%d/%m/%Y&nbsp;%Hh%M')|safe }}</td>
         </tr>
 
         <tr>

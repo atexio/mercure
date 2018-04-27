@@ -1,16 +1,15 @@
 import os
 
 from django.core import mail
+from django.test import TestCase
 from shutil import copyfile
 
-from django.test import TestCase
 
 from phishing.models import Attachment, Campaign, EmailTemplate, LandingPage,\
     Target, TargetGroup
-from phishing.tests.helpers import RQMixin
 
 
-class ScenarioTestCase(RQMixin, TestCase):
+class ScenarioTestCase(TestCase):
     def test_scenario(self):
         # add landing page
         landing_page_domain = 'https://my-fake-domain.com'
@@ -98,8 +97,8 @@ class ScenarioTestCase(RQMixin, TestCase):
         self.assertEqual(len(mail.outbox), 0)  # not email sended
 
         # send emails to group 1
-        campaign.target_groups.add(target_group1)
-        self.run_jobs()
+        campaign.target_groups_add(target_group1)
+        self.assertTrue(campaign.send())
 
         # There is three target and four trackers by target,
         # so we must have 12 trackers at all
@@ -125,8 +124,8 @@ class ScenarioTestCase(RQMixin, TestCase):
 
         # We send campaign to target_group2.
         # So we must have the previous 10 trackers and 4 more, so 16 at all
-        campaign.target_groups.add(target_group2)
-        self.run_jobs()
+        campaign.target_groups_add(target_group2)
+        self.assertTrue(campaign.send())
 
         self.assertEqual(campaign.trackers.count(), 16)
         self.assertEqual(len(mail.outbox), 4)
