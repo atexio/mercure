@@ -2,7 +2,6 @@ import re
 
 from collections import OrderedDict
 
-from datetimewidget.widgets import DateTimeWidget
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, \
     PermissionRequiredMixin
@@ -31,20 +30,24 @@ class CreateCampaign(PermissionRequiredMixin, CreateView):
 
     def get_form(self, form_class=None):
         form = super(CreateCampaign, self).get_form(form_class)
-        form.fields['send_at'].widget = DateTimeWidget(
-            attrs={
-                'data-readonly': 'false',
-            },
-            options={
-                'todayBtn': 'linked',
-            },
-            usel10n=True,
-            bootstrap_version=3)
         form.fields['smtp_use_ssl'].label = _('Use SSL')
         return form
 
     def form_valid(self, form):
-        return super(CreateCampaign, self).form_valid(form)
+        # get and remove target_groups infos (django crash if not manualy make)
+        target_groups = form.cleaned_data.pop('target_groups', [])
+        form.data = form.data.copy()
+        form.data.pop('target_groups', [])
+        form.fields.pop('target_groups', None)
+
+        # save model
+        result = super(CreateCampaign, self).form_valid(form)
+
+        # add target_groups link
+        for target_group in target_groups.all():
+            self.object.target_groups_add(target_group)
+
+        return result
 
 
 @login_required

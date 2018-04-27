@@ -13,4 +13,11 @@ from django.core.wsgi import get_wsgi_application
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "mercure.settings")
 
+# In docker SECRET_KEY a required
+if not os.environ.get('SECRET_KEY', None) and os.path.exists('/proc/1/cgroup'):
+    with open('/proc/1/cgroup', 'rt') as f:
+        if 'docker' in f.read():
+            raise EnvironmentError(
+                'In docker the SECRET_KEY environment variable is required')
+
 application = get_wsgi_application()
