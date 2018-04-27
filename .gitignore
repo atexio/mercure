@@ -66,4 +66,4 @@ src/
 *.zip
 
 media/
-
+data*

@@ -8,19 +8,18 @@ from django.urls import reverse
 from django.utils.timezone import now
 from freezegun import freeze_time
 
-from phishing.models import Campaign
+from phishing.models import Campaign, Tracker
 from phishing.models import EmailTemplate
 from phishing.models import LandingPage
 from phishing.models import Target
 from phishing.models import TargetGroup
 from phishing.models import TrackerInfos
 from phishing.strings import TRACKER_EMAIL_OPEN, TRACKER_LANDING_PAGE_OPEN, \
-    TRACKER_LANDING_PAGE_POST
+    TRACKER_LANDING_PAGE_POST, TRACKER_EMAIL_SEND
 from phishing.tests.constant import FIXTURE_PATH
-from phishing.tests.helpers import RQMixin
 
 
-class CampaignTestCase(RQMixin, TestCase):
+class CampaignTestCase(TestCase):
     fixtures = [
         os.path.join(FIXTURE_PATH, 'user.json'),
     ]
@@ -62,10 +61,10 @@ class CampaignTestCase(RQMixin, TestCase):
 
         for email in target_group1_emails:
             Target.objects.create(email=email, group=target_group1)
-        campaign.target_groups.add(target_group1)
+        campaign.target_groups_add(target_group1)
 
         # Test that campaign is not launched
-        self.run_jobs()
+        self.assertFalse(campaign.send())
         self.assertFalse(campaign.is_launched)
 
         self.client.login(username='admin', password='supertest')
@@ -75,7 +74,7 @@ class CampaignTestCase(RQMixin, TestCase):
 
         # Assert that campaign is correctly launched
         with freeze_time(now() + timedelta(hours=2)):
-            self.run_jobs()
+            self.assertTrue(campaign.send())
             self.assertTrue(campaign.is_launched)
             url = reverse('campaign_dashboard', args=(campaign.pk,))
             resp = self.client.get(url)
@@ -111,9 +110,8 @@ class CampaignTestCase(RQMixin, TestCase):
 
         for email in target_group1_emails:
             Target.objects.create(email=email, group=target_group1)
-        campaign.target_groups.add(target_group1)
-
-        self.run_jobs()
+        campaign.target_groups_add(target_group1)
+        self.assertTrue(campaign.send())
 
         target_group2_emails = ('b@test.com', 'c@test.com')
         target_group2_name = 'target group 2 name'
@@ -121,9 +119,8 @@ class CampaignTestCase(RQMixin, TestCase):
 
         for email in target_group2_emails:
             Target.objects.create(email=email, group=target_group2)
-        campaign.target_groups.add(target_group2)
-
-        self.run_jobs()
+        campaign.target_groups_add(target_group2)
+        self.assertTrue(campaign.send())
 
         # find and increase tracker
         def add_tracker_entry(tracker_key, email):
@@ -151,10 +148,8 @@ class CampaignTestCase(RQMixin, TestCase):
         add_tracker_entry(TRACKER_LANDING_PAGE_POST, 'c@test.com')
 
         # check values
-        campaign.target_groups.add(target_group1)
-
-        self.run_jobs()
-
+        campaign.target_groups_add(target_group1)
+        self.assertTrue(campaign.send())
         self.client.login(username='admin', password='supertest')
         url = reverse('campaign_dashboard', args=(campaign.pk,))
         resp = self.client.get(url)
@@ -225,15 +220,15 @@ class CampaignTestCase(RQMixin, TestCase):
         )
 
         # send emails to group 1
-        campaign.target_groups.add(target_group1)
-        self.run_jobs()
+        campaign.target_groups_add(target_group1)
+        self.assertTrue(campaign.send())
 
         for track in campaign.trackers.all():
             TrackerInfos.create(target_tracker=track)
 
         # send emails to group 1
-        campaign.target_groups.add(target_group1)
-        self.run_jobs()
+        campaign.target_groups_add(target_group1)
+        self.assertTrue(campaign.send())
 
         resp = self.client.get(reverse('campaign_dashboard',
                                        args=(campaign.pk,)))
@@ -291,15 +286,14 @@ class CampaignTestCase(RQMixin, TestCase):
         )
 
         # send emails to group 1
-        campaign.target_groups.add(target_group1)
-
-        self.run_jobs()
+        campaign.target_groups_add(target_group1)
+        self.assertTrue(campaign.send())
 
         for track in campaign.trackers.all():
             TrackerInfos.create(target_tracker=track)
 
         # send emails to group 1
-        campaign.target_groups.add(target_group1)
+        campaign.target_groups_add(target_group1)
         resp = self.client.get(reverse('campaign_dashboard',
                                        args=(campaign.pk,)))
         self.assertEqual(resp.status_code, 200)
@@ -346,14 +340,14 @@ class CampaignTestCase(RQMixin, TestCase):
         )
 
         # send emails to group 1
-        campaign.target_groups.add(target_group1)
-        self.run_jobs()
+        campaign.target_groups_add(target_group1)
+        self.assertFalse(campaign.send())  # smtp : ConnectionRefusedError
 
         for track in campaign.trackers.all():
             TrackerInfos.create(target_tracker=track)
 
         # send emails to group 1, need to test it with valid credential
-        campaign.target_groups.add(target_group1)
+        campaign.target_groups_add(target_group1)
         resp = self.client.get(reverse('campaign_dashboard',
                                        args=(campaign.pk,)))
         self.assertEqual(resp.status_code, 200)
@@ -411,8 +405,8 @@ class CampaignTestCase(RQMixin, TestCase):
         )
 
         # send emails to group 1
-        campaign.target_groups.add(target_group1)
-        self.run_jobs()
+        campaign.target_groups_add(target_group1)
+        self.assertTrue(campaign.send())
 
         # check minified url
         self.assertIn('click: http://tinyurl.com/',
@@ -422,9 +416,8 @@ class CampaignTestCase(RQMixin, TestCase):
             TrackerInfos.create(target_tracker=track)
 
         # send emails to group 1
-        campaign.target_groups.add(target_group1)
-
-        self.run_jobs()
+        campaign.target_groups_add(target_group1)
+        self.assertTrue(campaign.send())
         resp = self.client.get(reverse('campaign_dashboard',
                                        args=(campaign.pk,)))
         self.assertEqual(resp.status_code, 200)
@@ -486,17 +479,15 @@ class CampaignTestCase(RQMixin, TestCase):
         )
 
         # send emails to group 1
-        campaign.target_groups.add(target_group1)
-
-        self.run_jobs()
+        campaign.target_groups_add(target_group1)
+        self.assertTrue(campaign.send())
 
         for track in campaign.trackers.all():
             TrackerInfos.create(target_tracker=track)
 
         # send emails to group 1
-        campaign.target_groups.add(target_group1)
-
-        self.run_jobs()
+        campaign.target_groups_add(target_group1)
+        self.assertTrue(campaign.send())
 
         resp = self.client.get(reverse('campaign_dashboard',
                                        args=(campaign.pk,)))
@@ -507,6 +498,173 @@ class CampaignTestCase(RQMixin, TestCase):
         self.assertContains(resp, 'id="email_send_pie"')
         self.assertContains(resp, 'id="landing_page_open_pie"')
         self.assertNotContains(resp, 'id="post_on_landing_page_pie"')
+
+    def test_send(self):
+        # add email template
+        email_template = EmailTemplate.objects.create(
+            email_subject='Hello!',
+            from_email='account@example.com',
+            name='email template name',
+            text_content='Goodbye!',
+        )
+
+        # test without targets group
+        c = Campaign.objects.create(
+            email_template=email_template,
+            name='test group graph',
+        )
+        self.assertFalse(c.send())
+
+        # create targets group
+        target_group_name = 'target group 1 name'
+        target_group = TargetGroup.objects.create(name=target_group_name)
+
+        # test without target
+        c = Campaign.objects.create(
+            email_template=email_template,
+            name='test group graph',
+        )
+        c.target_groups_add(target_group)
+        self.assertFalse(c.send())
+
+        # add targets emails
+        for email in ('a@test.com', 'b@test.com'):
+            Target.objects.create(email=email, group=target_group)
+
+        # test send_at default (send now)
+        c = Campaign.objects.create(
+            email_template=email_template,
+            name='test group graph',
+        )
+        c.target_groups_add(target_group)
+        self.assertEqual(c.target_groups.count(), 1, c.target_groups.all())
+        self.assertIsNone(c.campaigntargetgroups_set.first().sended_at)
+        self.assertTrue(c.send())
+        self.assertTrue(c.is_launched)
+        self.assertEqual(c.campaigntargetgroups_set.count(), 1)
+        self.assertEqual(c.trackers.count(), 4)
+        self.assertIsNotNone(c.campaigntargetgroups_set.first().sended_at)
+
+        # test send_at now() (send now)
+        c = Campaign.objects.create(
+            email_template=email_template,
+            name='test group graph',
+            send_at=now(),
+        )
+        c.target_groups_add(target_group)
+        self.assertEqual(c.target_groups.count(), 1, c.target_groups.all())
+        self.assertIsNone(c.campaigntargetgroups_set.first().sended_at)
+        mail.outbox.clear()
+        self.assertTrue(c.send())
+        self.assertTrue(c.is_launched)
+        self.assertEqual(len(mail.outbox), 2)
+        self.assertEqual(c.campaigntargetgroups_set.count(), 1)
+        self.assertEqual(c.trackers.count(), 4)
+        self.assertIsNotNone(c.campaigntargetgroups_set.first().sended_at)
+
+        # test send_at in past (send now)
+        c = Campaign.objects.create(
+            email_template=email_template,
+            name='test group graph',
+            send_at=now() - timedelta(days=1),
+        )
+        c.target_groups_add(target_group)
+        self.assertEqual(c.target_groups.count(), 1, c.target_groups.all())
+        self.assertIsNone(c.campaigntargetgroups_set.first().sended_at)
+        mail.outbox.clear()
+        self.assertTrue(c.send())
+        self.assertTrue(c.is_launched)
+        self.assertEqual(len(mail.outbox), 2)
+        self.assertEqual(c.campaigntargetgroups_set.count(), 1)
+        self.assertEqual(c.trackers.count(), 4)
+        self.assertIsNotNone(c.campaigntargetgroups_set.first().sended_at)
+
+        # test send_at in futur (no send now)
+        c = Campaign.objects.create(
+            email_template=email_template,
+            name='test group graph',
+            send_at=now() + timedelta(hours=1),
+        )
+        c.target_groups_add(target_group)
+        self.assertEqual(c.target_groups.count(), 1, c.target_groups.all())
+        self.assertIsNone(c.campaigntargetgroups_set.first().sended_at)
+        mail.outbox.clear()
+        self.assertFalse(c.send())
+        self.assertFalse(c.is_launched)
+        self.assertEqual(len(mail.outbox), 0)
+        self.assertEqual(c.campaigntargetgroups_set.count(), 1)
+        self.assertEqual(c.trackers.count(), 0)
+        self.assertIsNone(c.campaigntargetgroups_set.first().sended_at)
+
+        # emulate futur date (send)
+        with freeze_time(now() + timedelta(hours=1)):
+            self.assertTrue(c.send())
+            self.assertEqual(len(mail.outbox), 2)
+            self.assertEqual(c.campaigntargetgroups_set.count(), 1)
+            self.assertEqual(c.trackers.count(), 4)
+            self.assertIsNotNone(c.campaigntargetgroups_set.first().sended_at)
+
+    def test_send_all(self):
+        # add email template
+        email_template = EmailTemplate.objects.create(
+            email_subject='Hello!',
+            from_email='account@example.com',
+            name='email template name',
+            text_content='Goodbye!',
+        )
+
+        # add campagne without targets group (not send)
+        Campaign.objects.create(
+            email_template=email_template,
+            name='test group graph',
+        )
+
+        # create targets group
+        target_group_name = 'target group 1 name'
+        target_group = TargetGroup.objects.create(name=target_group_name)
+        for email in ('a@test.com', 'b@test.com'):
+            Target.objects.create(email=email, group=target_group)
+
+        # add campagne with send_at default (send now)
+        Campaign.objects.create(
+            email_template=email_template,
+            name='test group graph',
+        ).target_groups_add(target_group)
+
+        # add campagne with send_at now() (send now)
+        Campaign.objects.create(
+            email_template=email_template,
+            name='test group graph',
+            send_at=now(),
+        ).target_groups_add(target_group)
+
+        # add campagne with send_at in past (send now)
+        Campaign.objects.create(
+            email_template=email_template,
+            name='test group graph',
+            send_at=now() - timedelta(days=1),
+        ).target_groups_add(target_group)
+
+        # add campagne with send_at in futur (no send now)
+        Campaign.objects.create(
+            email_template=email_template,
+            name='test group graph',
+            send_at=now() + timedelta(hours=1),
+        ).target_groups_add(target_group)
+
+        # prepare tracker query
+        tracker_query = Tracker.objects.filter(
+            key=TRACKER_EMAIL_SEND, target__group_id=target_group.pk)
+
+        # send
+        self.assertEqual(tracker_query.count(), 0)  # no send campagns
+        self.assertTrue(Campaign.send_all())  # send 3 valid campagn
+        self.assertEqual(tracker_query.count(), 3*2)  # campagn * emails
+
+        # emulate futur date (send last)
+        with freeze_time(now() + timedelta(hours=1)):
+            self.assertTrue(Campaign.send_all())  # send 1 valid campagn
+            self.assertEqual(tracker_query.count(), 4 * 2)  # campagn * emails
 
     # TODO:Check if someone post on landing page
     # def _test_dashboard_campaign_with_landing_page_and_response(self):
@@ -555,13 +713,13 @@ class CampaignTestCase(RQMixin, TestCase):
     #     )
     #
     #     # send emails to group 1
-    #     campaign.target_groups.add(target_group1)
+    #     campaign.target_groups_add(target_group1)
     #
     #     for track in campaign.trackers.all():
     #         tracker_infos = TrackerInfos.create(target_tracker=track)
     #
     #     # send emails to group 1
-    #     campaign.target_groups.add(target_group1)
+    #     campaign.target_groups_add(target_group1)
     #     resp = self.client.get(reverse('campaign_dashboard',
     #                                    args=(campaign.pk,)))
     #     self.assertEqual(resp.status_code, 200)
