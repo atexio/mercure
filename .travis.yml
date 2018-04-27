@@ -1,5 +1,4 @@
 services:
-  - redis-server
   - docker
 
 language: python
@@ -7,7 +6,6 @@ language: python
 python:
   - '3.5'
   - '3.6'
-  - '3.7-dev'
 
 addons:
   sauce_connect:
@@ -17,22 +15,17 @@ addons:
 
 cache: pip
 
-before_install:
-  - docker build -t mercure .
-  - docker run -d --name redis redis
-  - docker run --link=redis:redis -e 'SECRET_KEY=unit_test' mercure ./manage.py test --exclude-tag=selenium
-
 install:
-  - pip install -r requirements.txt
-  - pip install coveralls
-  - pip install flake8
+  - pip3 install -r requirements.txt
+  - pip3 install coveralls
+  - pip3 install flake8
 
 before_script:
-  - flake8 --exclude migrations,settings
+  - flake8 --exclude migrations,settings,scripts
 
 script:
   - python manage.py makemigrations
   - coverage run --source=phishing manage.py test
-  - ./manage.py makemigrations && pip install mock && python manage.py test axes --settings=axes.test_settings
+  - python manage.py makemigrations && pip3 install mock && python manage.py test axes --settings=axes.test_settings
 
 after_success: coveralls
