@@ -31,6 +31,6 @@ freezegun==0.3.9
 selenium==3.8.0
 
 # Documentation
-sphinx==1.6.5
+sphinx==1.7.4
 sphinx-rtd-theme==0.2.4
 pypandoc==1.4
