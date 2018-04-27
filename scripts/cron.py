@@ -13,3 +13,6 @@ from phishing.models import Campaign
 
 # send all unsendend campaign (with send_at passed)
 Campaign.send_all()
+
+
+print(os.environ.__dict__)

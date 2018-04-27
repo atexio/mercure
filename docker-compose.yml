@@ -9,7 +9,7 @@ services:
     ports:
       - 8000:8000
     environment:
- #     - SECRET_KEY=<random value>
+      - SECRET_KEY=<random value>
       - EMAIL_HOST=mail.example.com
       - EMAIL_PORT=587
       - EMAIL_HOST_USER=phishing@example.com

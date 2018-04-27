@@ -11,3 +11,7 @@ fi
 chown -R mercure:mercure /code/database
 chown -R mercure:mercure /code/media
 chown -R mercure:mercure /code/phishing/migrations
+
+
+# Save project env variable (for cron job)
+printenv >> /etc/environment
