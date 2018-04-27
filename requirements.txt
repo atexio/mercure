@@ -1,23 +1,16 @@
 # Basics
-django==2.0.3
-djangorestframework==3.7.7
+django==2.0.4
+djangorestframework==3.8.2
 
 # Templates
 django-bootstrap-form==3.3
 jinja2==2.10
-django-datetime-widget==0.9.3
-
-# Jobs
-django-redis-cache==1.7.1
-rq==0.9.2
-rq-scheduler==0.7.0
-django-rq==1.0.1
 
 # Debugging
-raven==6.4.0
+raven==6.7.0
 
 # Security
-django-axes==4.0.1
+django-axes==4.3.1
 
 # Data parsing
 beautifulsoup4==4.6.0
@@ -30,7 +23,7 @@ requests==2.18.4
 # Utils
 django-model-utils==3.0.0
 pyshorteners==0.6.1
-pytz==2017.3
+pytz==2018.4
 unipath==1.1
 
 # Testing
@@ -38,6 +31,6 @@ freezegun==0.3.9
 selenium==3.8.0
 
 # Documentation
-sphinx==1.6.5
+sphinx==1.7.4
 sphinx-rtd-theme==0.3.0
 pypandoc==1.4

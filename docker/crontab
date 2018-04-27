@@ -1,0 +1,1 @@
+*/1 * * * *  mercure /usr/local/bin/python3 /code/scripts/cron.py

@@ -28,18 +28,6 @@ EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'False') \
 EMAIL_USE_SSL = os.environ.get('EMAIL_USE_SSL', 'False') \
     .lower() in ['true', '1', 't', 'y', 'yes']
 
-CACHES = {
-    'default': {
-        'BACKEND': 'redis_cache.cache.RedisCache',
-        'LOCATION': os.environ.get('REDIS_PORT', 'tcp://redis:6379'),
-    },
-}
-
-RQ_QUEUES = {
-    'default': {
-        'URL': os.environ.get('REDIS_PORT', 'tcp://redis:6379'),
-    },
-}
 
 # sentry.io (send error to platform)
 if 'SENTRY_DSN' in os.environ:

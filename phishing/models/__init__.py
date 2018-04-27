@@ -4,15 +4,17 @@ from django.contrib.contenttypes.models import ContentType
 from django.db.models.signals import post_migrate
 
 from .attachment import Attachment
-from .campaign import Campaign
+from .campaign import Campaign, CampaignTargetGroups
 from .email_template import EmailTemplate
 from .landing_page import LandingPage
 from .target import Target, TargetGroup
 from .tracker import Tracker, TrackerInfos
 from .user import User
 
-__all__ = ['Attachment', 'Campaign', 'EmailTemplate', 'LandingPage',
-           'Target', 'TargetGroup', 'Tracker', 'TrackerInfos', 'User']
+__all__ = [
+    'Attachment', 'Campaign', 'CampaignTargetGroups', 'EmailTemplate',
+    'LandingPage', 'Target', 'TargetGroup', 'Tracker', 'TrackerInfos', 'User'
+]
 
 
 # add django view model permission
