@@ -5,8 +5,8 @@ from string import ascii_lowercase
 from django.test import TestCase
 from django.urls import reverse
 
-from phishing.models import Tracker, TrackerInfos, Campaign
-from phishing.models import TargetGroup, Target
+from phishing.models import Campaign, Tracker, TrackerInfos, TargetGroup, \
+    Target
 from phishing.tests.constant import FIXTURE_PATH
 
 
@@ -23,7 +23,7 @@ class TrackerTestCase(TestCase):
             email_template_id=1,
             name='Browser tracker test'
         )
-        camp.target_groups.add(
+        camp.target_groups_add(
             TargetGroup.objects.first()
         )
 
@@ -69,7 +69,7 @@ class TrackerTestCase(TestCase):
             email_template_id=1,
             name='Browser tracker test'
         )
-        camp.target_groups.add(
+        camp.target_groups_add(
             TargetGroup.objects.first()
         )
 
@@ -113,7 +113,7 @@ class TrackerTestCase(TestCase):
             email_template_id=1,
             name='Browser tracker test'
         )
-        camp.target_groups.add(
+        camp.target_groups_add(
             TargetGroup.objects.first()
         )
 
@@ -133,9 +133,7 @@ class TrackerTestCase(TestCase):
             email_template_id=1,
             name='Browser tracker test'
         )
-        camp.target_groups.add(
-            TargetGroup.objects.first()
-        )
+        camp.target_groups_add(TargetGroup.objects.first())
 
         Tracker.objects.create(
             campaign_id=camp.pk,
@@ -153,7 +151,7 @@ class TrackerTestCase(TestCase):
             email_template_id=1,
             name='Browser tracker test'
         )
-        camp.target_groups.add(
+        camp.target_groups_add(
             TargetGroup.objects.first()
         )
 

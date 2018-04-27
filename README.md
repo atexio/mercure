@@ -47,8 +47,6 @@ Mercure is a tool for security managers who want to teach their colleagues about
 | EMAIL_PORT                | Optional | SMTP port                                   | 587                                |
 | EMAIL_HOST_USER           | Optional | SMTP user                                   | phishing@example.com               |
 | EMAIL_HOST_PASSWORD       | Optional | SMTP password                               | P@SSWORD                           |
-| REDIS_HOST                | Optional | Redis server                                | 127.0.0.1                          |
-| REDIS_PORT                | Optional | Redis port                                  | 6379                               |
 | DEBUG                     | Optional | Run on debug mode                           | True                               |
 | SENTRY_DSN                | Optional | Send debug info to sentry.io                | https://23xxx:38xxx@sentry.io/1234 |
 | AXES_LOCK_OUT_AT_FAILURE  | Optional | Ban on forcebrute login                     | True                               |
@@ -58,20 +56,15 @@ Mercure is a tool for security managers who want to teach their colleagues about
 
 ## Sample deployment
 
+Edit docker compose configuration (```docker-compose.yml```)
+
 ```yaml
 version: '2'
 
 services:
-  redis:
-    image: redis
-    restart: always
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
   front:
     image: synhackfr/mercure
     restart: always
-    links:
-      - redis:redis
     ports:
       - 8000:8000
     volumes:
@@ -105,31 +98,6 @@ Next, you can create a super user to log into web interface:
 ```bash
 # create super user
 docker-compose exec front python manage.py createsuperuser
-```
-
-# Git Quickstart
-
-## Requirements
-
-* python >= 3.5
-* pip
-
-## Deployment
-
-At first remember that Mercure is only compatible with Python 3. When using pip and manage.py ensure that ```pip -V``` and ```python -V``` are Python3 versions. You can use *virtualenv* to define python 3 as the default version for a project without changing system wide version
-
-```
-git clone git@github.com:synhack/mercure.git && cd mercure
-pip install -r requirements.txt
-./manage.py makemigrations
-./manage.py migrate
-./manage.py collectstatic
-./manage.py createsuperuser
-
-# In three different tabs
-./manage.py runserver
-./manage.py rqworker default
-./manage.py rqscheduler
 ```
 
 # How to use mercure
@@ -201,7 +169,6 @@ Targets, Email Templates and Campaign are the minimum required to run a basic ph
 
 4. Run unnittests
 	```
-    docker run --name redis -d -p 6379:6379 redis
 	python manage.py test --exclude-tag selenium
 	```
 
