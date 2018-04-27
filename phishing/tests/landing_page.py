@@ -1,7 +1,7 @@
-import os
-
 import bs4 as BeautifulSoup
+import os
 import requests
+
 from django.test import TestCase
 from django.urls import reverse
 
@@ -11,10 +11,9 @@ from phishing.models import LandingPage, Campaign, TargetGroup, Tracker, \
 from phishing.strings import POST_DOMAIN, TRACKER_LANDING_PAGE_POST, \
     POST_TRACKER_ID
 from phishing.tests.constant import FILES_PATH, FIXTURE_PATH
-from phishing.tests.helpers import RQMixin
 
 
-class LandingPageTestCase(RQMixin, TestCase):
+class LandingPageTestCase(TestCase):
     fixtures = [
         os.path.join(FIXTURE_PATH, 'target.json'),
         os.path.join(FIXTURE_PATH, 'user.json'),
@@ -366,8 +365,8 @@ class LandingPageTestCase(RQMixin, TestCase):
             name='Test landing page campaign'
         )
         target_grp = TargetGroup.objects.get(pk=1)
-        camp.target_groups.add(target_grp)
-        self.run_jobs()
+        camp.target_groups_add(target_grp)
+        self.assertTrue(camp.send())
 
         # We check that the trackers has been created with the campaign
         qs = camp.trackers.filter(key='landing_page_open')
@@ -424,8 +423,8 @@ class LandingPageTestCase(RQMixin, TestCase):
             name='Test landing page campaign'
         )
         target_grp = TargetGroup.objects.get(pk=1)
-        camp.target_groups.add(target_grp)
-        self.run_jobs()
+        camp.target_groups_add(target_grp)
+        self.assertTrue(camp.send())
 
         # Remove tracker post to see if page load anymore
         Tracker.objects.filter(
@@ -468,8 +467,8 @@ class LandingPageTestCase(RQMixin, TestCase):
             name='Test landing page campaign'
         )
         target_grp = TargetGroup.objects.get(pk=1)
-        camp.target_groups.add(target_grp)
-        self.run_jobs()
+        camp.target_groups_add(target_grp)
+        self.assertTrue(camp.send())
 
         tracker = camp.trackers.filter(key='landing_page_open').first()
 
@@ -506,8 +505,8 @@ class LandingPageTestCase(RQMixin, TestCase):
             name='Test landing page campaign'
         )
         target_grp = TargetGroup.objects.get(pk=1)
-        camp.target_groups.add(target_grp)
-        self.run_jobs()
+        camp.target_groups_add(target_grp)
+        self.assertTrue(camp.send())
 
         tracker_post = Tracker.objects.filter(
             campaign_id=camp.pk,

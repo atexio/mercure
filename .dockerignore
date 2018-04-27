@@ -1,4 +1,11 @@
-db.sqlite3
+.idea
+.git
+.travis.yml
+LICENSE
 docker-compose.yml
 Dockerfile
-data/
+data*
+docs/
+make_doc.py
+media
+README.md

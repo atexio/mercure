@@ -1,14 +1,11 @@
 version: '2'
 
 services:
-  redis:
-    image: redis
-    restart: always
   front:
-    image: synhackfr/mercure
-    restart: always
-    links:
-      - redis:redis
+    #image: synhackfr/mercure
+    #restart: always
+    build: .
+    network_mode: 'bridge'
     ports:
       - 8000:8000
     environment:
@@ -17,3 +14,8 @@ services:
       - EMAIL_PORT=587
       - EMAIL_HOST_USER=phishing@example.com
       - EMAIL_HOST_PASSWORD=P@SSWORD
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./data/database:/code/database
+      - ./data/media:/code/media
+      - ./data/migrations/phishing:/code/phishing/migrations
