@@ -2,18 +2,16 @@ version: '2'
 
 services:
   front:
-    #image: synhackfr/mercure
-    #restart: always
-    build: .
-    network_mode: 'bridge'
+    image: synhackfr/mercure
+    restart: always
     ports:
       - 8000:8000
     environment:
-      - SECRET_KEY=<random value>
-      - EMAIL_HOST=mail.example.com
-      - EMAIL_PORT=587
-      - EMAIL_HOST_USER=phishing@example.com
-      - EMAIL_HOST_PASSWORD=P@SSWORD
+      SECRET_KEY: '<random value>'
+      URL: 'https://preprod.mercure.io'
+      EMAIL_HOST:  'mail.example.com'
+      EMAIL_HOST_USER: 'phishing@example.com'
+      EMAIL_HOST_PASSWORD: 'P@SSWORD'
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./data/database:/code/database
