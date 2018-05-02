@@ -28,26 +28,30 @@ EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'False') \
 EMAIL_USE_SSL = os.environ.get('EMAIL_USE_SSL', 'False') \
     .lower() in ['true', '1', 't', 'y', 'yes']
 
-
-# sentry.io (send error to platform)
+# Send error to sentry.io
 if 'SENTRY_DSN' in os.environ:
     import raven
 
     INSTALLED_APPS += ('raven.contrib.django.raven_compat',)
     RAVEN_CONFIG = {
         'dsn': os.environ['SENTRY_DSN'],
-        # If you are using git, you can also automatically configure the
-        # release based on the git info.
-        'release': raven.fetch_git_sha(os.path.dirname(os.pardir)),
     }
 
-# security (forcebrute)
-INSTALLED_APPS += ('axes',)
-AXES_LOCK_OUT_AT_FAILURE = os.environ.get('AXES_LOCK_OUT_AT_FAILURE', True)
-AXES_COOLOFF_TIME = os.environ.get('AXES_COOLOFF_TIME', 0.8333)  # 5 minutes
+# Forcebrute account protection
+AXE_DISABLED = os.environ.get('AXE_DISABLED', 'False') \
+    .lower() in ['true', '1', 't', 'y', 'yes']
+if not AXE_DISABLED:
+    INSTALLED_APPS += ('axes',)
+    AXES_LOCK_OUT_AT_FAILURE = os.environ.get('AXES_LOCK_OUT_AT_FAILURE', True)
+    AXES_COOLOFF_TIME = os.environ.get('AXES_COOLOFF_TIME', 0.8333)  # 5 min
 
-# if protection active => send alert to sentry.io
-if 'SENTRY_DSN' in os.environ and AXES_LOCK_OUT_AT_FAILURE:
+    # Init defaut axes_cache if default django cache is used
+    if 'default' not in CACHES or CACHES.get('default', '') \
+            .endswith('LocMemCache'):
+        CACHES['axes_cache'] = 'django.core.cache.backends.dummy.DummyCache'
+
+# if forcebrute protection is active: send alert to sentry.io
+if 'SENTRY_DSN' in os.environ and not AXE_DISABLED:
     import raven
     import logging
     from raven.contrib.django.raven_compat.handlers import SentryHandler

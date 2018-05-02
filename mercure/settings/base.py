@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 
 import os
 
+from django.conf import global_settings
 from unipath import Path
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = Path(__file__).ancestor(3)
@@ -154,6 +155,9 @@ MEDIA_URL = '/media/'
 # auth
 AUTH_USER_MODEL = 'phishing.User'
 LOGIN_REDIRECT_URL = '/'
+
+# Init cache setting (for prod add setting)
+CACHES = global_settings.CACHES
 
 # api
 REST_FRAMEWORK = {
