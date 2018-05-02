@@ -49,6 +49,7 @@ Mercure is a tool for security managers who want to teach their colleagues about
 | EMAIL_HOST_PASSWORD       | Optional | SMTP password                               | P@SSWORD                           |
 | DEBUG                     | Optional | Run on debug mode                           | True                               |
 | SENTRY_DSN                | Optional | Send debug info to sentry.io                | https://23xxx:38xxx@sentry.io/1234 |
+| AXE_DISABLED              | Optional | Forcebrute protection is disabled           | True                               |
 | AXES_LOCK_OUT_AT_FAILURE  | Optional | Ban on forcebrute login                     | True                               |
 | AXES_COOLOFF_TIME         | Optional | Ban duration on forcebrute login (in hours) | 0.8333                             |
 | DONT_SERVES_STATIC_FILE   | Optional | Don't serve static files with django        | True                               |
@@ -67,16 +68,18 @@ services:
     restart: always
     ports:
       - 8000:8000
-    volumes:
-      - ./data/db:/usr/src/app/data
-      - ./data/media:/usr/src/app/media
-      - /etc/localtime:/etc/localtime:ro
     environment:
-      - SECRET_KEY=<random value>
-      - EMAIL_HOST=mail.example.com
-      - EMAIL_PORT=587
-      - EMAIL_HOST_USER=phishing@example.com
-      - EMAIL_HOST_PASSWORD=P@SSWORD
+      SECRET_KEY: '<random value>'
+      URL: 'https://preprod.mercure.io'
+      EMAIL_HOST:  'mail.example.com'
+      EMAIL_HOST_USER: 'phishing@example.com'
+      EMAIL_HOST_PASSWORD: 'P@SSWORD'
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./data/database:/code/database
+      - ./data/media:/code/media
+      - ./data/migrations/phishing:/code/phishing/migrations
+
 ```
 
 To generate the SECRET_KEY variable, you can use this command:
