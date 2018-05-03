@@ -46,7 +46,7 @@ if not AXE_DISABLED:
     AXES_COOLOFF_TIME = os.environ.get('AXES_COOLOFF_TIME', 0.8333)  # 5 min
 
     # Init defaut axes_cache if default django cache is used
-    if 'default' not in CACHES or CACHES.get('default', '') \
+    if 'default' not in CACHES or CACHES.get('default', {}).get('BACKEND', '')\
             .endswith('LocMemCache'):
         CACHES['axes_cache'] = 'django.core.cache.backends.dummy.DummyCache'
 
