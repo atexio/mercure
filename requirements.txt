@@ -7,7 +7,7 @@ django-bootstrap-form==3.4
 jinja2==2.10
 
 # Debugging
-raven==6.7.0
+raven==6.8.0
 
 # Security
 django-axes==4.3.1
