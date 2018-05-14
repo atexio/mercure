@@ -19,7 +19,7 @@ before_script:
 
 script:
   - python manage.py makemigrations
-  - coverage run --source=phishing manage.py test
+  - travis_retry coverage run --source=phishing manage.py test
   - python manage.py makemigrations && pip3 install mock && python manage.py test axes --settings=axes.test_settings
 
 after_success: coveralls
