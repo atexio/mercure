@@ -5,7 +5,7 @@
 		"fields": {
 			"name": "Test template",
 			"email_subject": "Superb phishing",
-			"from_email": "Alice cooper <a.cooper@synhack.fr>",
+			"from_email": "Alice cooper <a.cooper@atexio.fr>",
 			"has_open_tracker": true,
 			"text_content": "Boo!",
 			"html_content": "<html>\r\n<head>\r\n\t<title></title>\r\n</head>\r\n<body>\r\n<p>Boo!</p>\r\n</body>\r\n</html>",
@@ -18,7 +18,7 @@
 		"fields": {
 			"name": "Test template with landing",
 			"email_subject": "Superb phishing",
-			"from_email": "Alice cooper <a.cooper@synhack.fr>",
+			"from_email": "Alice cooper <a.cooper@atexio.fr>",
 			"has_open_tracker": true,
 			"text_content": "Boo!",
 			"html_content": "<html>\r\n<head>\r\n\t<title></title>\r\n</head>\r\n<body>\r\n<p>Boo!</p>\r\n</body>\r\n</html>",

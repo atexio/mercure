@@ -45,7 +45,7 @@ class AttachmentTestCase(TestCase):
 
         tracker_url = 'http://localhost/en/tracker/%s.png' % tracker.pk
         self.assertEqual(received['tracker_url'], tracker_url)
-        self.assertEqual(received['target_email'], 'test@synhack.fr')
+        self.assertEqual(received['target_email'], 'test@atexio.fr')
         self.assertEqual(received['target_first_name'], 'John')
         self.assertEqual(received['target_last_name'], 'Doe')
 

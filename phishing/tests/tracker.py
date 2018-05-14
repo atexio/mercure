@@ -126,7 +126,7 @@ class TrackerTestCase(TestCase):
 
         # Test __str__
         self.assertEqual(camp.trackers.all()[0].__str__(),
-                         "[Browser tracker test] test@synhack.fr (: )")
+                         "[Browser tracker test] test@atexio.fr (: )")
 
     def test_trackerInfo(self):
         camp = Campaign.objects.create(
@@ -168,7 +168,7 @@ class TrackerTestCase(TestCase):
             http_request=req(met))
         # Test __str__
         self.assertEqual(tracker_infos.__str__(),
-                         "[Browser tracker test] test@synhack.fr (: )")
+                         "[Browser tracker test] test@atexio.fr (: )")
 
 
 # TODO: A supprimer lorsque la méthode "create" sera surchargée
