@@ -41,7 +41,7 @@ urlpatterns = [
         landing_page.landing_page_post, name='landing_page_post'),
     url(r'^landing-page/update/(?P<pk>\w+)$', landing_page.Edit.as_view(),
         name='landing_page_edit'),
-    url(r'^landing-page/view/(?P<tracker_id>[0-9a-z-]+)$',
+    url(r'^lp/view/(?P<tracker_id>[0-9a-z-]+)$',
         landing_page.landing_page, name='landing_page'),
 
     # email template
