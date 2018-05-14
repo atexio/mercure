@@ -204,7 +204,7 @@ class SeleniumTestCase(StaticLiveServerTestCase):
         tpl = EmailTemplate.objects.create(
             name='Test delete ajax',
             email_subject='Test delete ajax',
-            from_email='jdoe@synhack.fr',
+            from_email='jdoe@atexio.fr',
             text_content='hello'
         )
         self.drv.get(self.abs_url(reverse('email_template_list')))
@@ -234,7 +234,7 @@ class SeleniumTestCase(StaticLiveServerTestCase):
         tpl = EmailTemplate.objects.create(
             name='Test clone',
             email_subject='Test clone',
-            from_email='jdoe@synhack.fr',
+            from_email='jdoe@atexio.fr',
             text_content='hello'
         )
 

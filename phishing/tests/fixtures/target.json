@@ -3,7 +3,7 @@
 		"model": "phishing.target",
 		"pk": 1,
 		"fields": {
-			"email": "test@synhack.fr",
+			"email": "test@atexio.fr",
 			"group": 1,
 			"first_name": "John",
 			"last_name": "Doe"

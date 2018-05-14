@@ -1,10 +1,10 @@
 # Mercure
 
-[![Build Status](https://travis-ci.org/synhack/mercure.svg?branch=master)](https://travis-ci.org/synhack/mercure)
-[![Coverage Status](https://coveralls.io/repos/github/synhack/mercure/badge.svg?branch=master)](https://coveralls.io/github/synhack/mercure?branch=master)
+[![Build Status](https://travis-ci.org/atexio/mercure.svg?branch=master)](https://travis-ci.org/atexio/mercure)
+[![Coverage Status](https://coveralls.io/repos/github/atexio/mercure/badge.svg?branch=master)](https://coveralls.io/github/atexio/mercure?branch=master)
 [![Documentation Status](https://readthedocs.org/projects/mercure/badge/?version=latest)](http://doc.mercure.io/en/latest/?badge=latest)
-[![Code Health](https://landscape.io/github/synhack/mercure/master/landscape.svg?style=flat)](https://landscape.io/github/synhack/mercure/master)
-[![Requirements Status](https://requires.io/github/synhack/mercure/requirements.svg?branch=master)](https://requires.io/github/synhack/mercure/requirements/?branch=master)
+[![Code Health](https://landscape.io/github/atexio/mercure/master/landscape.svg?style=flat)](https://landscape.io/github/atexio/mercure/master)
+[![Requirements Status](https://requires.io/github/atexio/mercure/requirements.svg?branch=master)](https://requires.io/github/atexio/mercure/requirements/?branch=master)
 
 Mercure is a tool for security managers who want to teach their colleagues about phishing.
 
@@ -64,7 +64,7 @@ version: '2'
 
 services:
   front:
-    image: synhackfr/mercure
+    image: atexio/mercure
     restart: always
     ports:
       - 8000:8000
@@ -117,13 +117,13 @@ Targets, Email Templates and Campaign are the minimum required to run a basic ph
 
 1. First, add your targets
 
-   ![Targets](docs/img/mercure_targets.png)
+   ![Targets](https://raw.githubusercontent.com/atexio/mercure/master/docs/img/mercure_targets.png)
 
    You need to fill mercure name, the target email.Target first and last name are optional, but can be usefull to the landing page
 
 2. Then, fill the email template.
 
-   ![Landing page](docs/img/mercure_emailtemplate.png)
+   ![Landing page](https://raw.githubusercontent.com/atexio/mercure/master/docs/img/mercure_emailtemplate.png)
 
    You need to fill the mercure name, the subject, the send and the email content.
    To improve the email quality, you have to fill the email content HTML and the text content.
@@ -134,7 +134,7 @@ Targets, Email Templates and Campaign are the minimum required to run a basic ph
 
 3. Finally, launch the campaign
 
-   ![Campaign](docs/img/mercure_campaign.png)
+   ![Campaign](https://raw.githubusercontent.com/atexio/mercure/master/docs/img/mercure_campaign.png)
 
    You need to fill the mercure name, select the email template and the target group.
    You can select the SMTP credentials, SSL using or URL minimazing
@@ -142,7 +142,7 @@ Targets, Email Templates and Campaign are the minimum required to run a basic ph
 
 4. Optional, add landing page
 
-   ![Landing page](docs/img/mercure_landingpage.png)
+   ![Landing page](https://raw.githubusercontent.com/atexio/mercure/master/docs/img/mercure_landingpage.png)
 
    You need to fill the mercure name, the domain to use
    You can use "Import from URL" to copy an existing website.
@@ -151,7 +151,7 @@ Targets, Email Templates and Campaign are the minimum required to run a basic ph
 
 5. Optional, add Attachment
 
-   ![Attachments](docs/img/mercure_attachment.png)
+   ![Attachments](https://raw.githubusercontent.com/atexio/mercure/master/docs/img/mercure_attachment.png)
 
    You need to fill the mercure name, the file name which appears in the email and the file
    You also have to check if the the file is buildable or not, if you need to compute a file for example.
@@ -182,7 +182,7 @@ Targets, Email Templates and Campaign are the minimum required to run a basic ph
 
 We want to keep Mercure safe for everyone. If you've discovered a security vulnerability in Mercure, we appreciate your help in disclosing it to us in a responsible manner.
 
-Send an email to 'security@synhack.fr'. If you want, you can use with [PGP Key](https://pgp.mit.edu/pks/lookup?op=vindex&search=security@synhack.fr)
+Send an email to 'security@atexio.fr'. If you want, you can use with [PGP Key](https://pgp.mit.edu/pks/lookup?op=vindex&search=security@atexio.fr)
 
 
 ## Vulnerability summary

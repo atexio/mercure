@@ -2,7 +2,7 @@ version: '2'
 
 services:
   front:
-    image: synhackfr/mercure
+    image: atexio/mercure
     restart: always
     ports:
       - 8000:8000
