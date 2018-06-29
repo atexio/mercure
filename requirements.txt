@@ -23,7 +23,7 @@ requests==2.19.1
 # Utils
 django-model-utils==3.1.2
 pyshorteners==0.6.1
-pytz==2018.4
+pytz==2018.5
 unipath==1.1
 
 # Testing
