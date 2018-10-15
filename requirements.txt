@@ -27,7 +27,7 @@ pytz==2018.5
 unipath==1.1
 
 # Testing
-freezegun==0.3.10
+freezegun==0.3.11
 selenium==3.13.0
 
 # Documentation
