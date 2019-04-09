@@ -27,9 +27,9 @@ class SeleniumTestCase(StaticLiveServerTestCase):
         username = os.environ.get('SAUCE_USERNAME')
         accesskey = os.environ.get('SAUCE_ACCESS_KEY')
         desired_cap = {
-            'platform': "Mac OS X 10.9",
-            'browserName': "chrome",
-            'version': "31",
+            'platform': 'LINUX',
+            'browserName': 'chrome',
+            'version': '',
             'tunnel-identifier': os.environ.get('TRAVIS_JOB_NUMBER')
         }
         self.drv = webdriver.Remote(
