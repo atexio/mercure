@@ -28,7 +28,7 @@ unipath==1.1
 
 # Testing
 freezegun==0.3.10
-selenium==3.13.0
+selenium==3.141.0
 
 # Documentation
 sphinx==2.0.1
