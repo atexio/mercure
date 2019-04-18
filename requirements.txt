@@ -1,36 +1,36 @@
 # Basics
 django==2.0.7
-djangorestframework==3.8.2
+djangorestframework==3.9.2
 
 # Templates
 django-bootstrap-form==3.4
-jinja2==2.10
+jinja2==2.10.1
 
 # Debugging
-raven==6.9.0
+raven==6.10.0
 
 # Security
-django-axes==4.4.0
+django-axes==4.5.4
 
 # Data parsing
-beautifulsoup4==4.6.0
+beautifulsoup4==4.7.1
 html5lib==1.0.1
-cchardet==2.1.1
+cchardet==2.1.4
 
 # Networking
-requests==2.19.1
+requests==2.21.0
 
 # Utils
 django-model-utils==3.1.2
 pyshorteners==0.6.1
-pytz==2018.5
+pytz==2019.1
 unipath==1.1
 
 # Testing
-freezegun==0.3.10
-selenium==3.13.0
+freezegun==0.3.11
+selenium==3.141.0
 
 # Documentation
-sphinx==1.7.5
+sphinx==2.0.1
 sphinx-rtd-theme==0.4.3
 pypandoc==1.4
