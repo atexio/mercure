@@ -1,6 +1,7 @@
 import bs4 as BeautifulSoup
 import os
 import requests
+import uuid
 
 from django.test import TestCase
 from django.urls import reverse
@@ -444,44 +445,6 @@ class LandingPageTestCase(TestCase):
         infos = TrackerInfos.objects.get(target_tracker_id=tracker.pk)
         self.assertEqual(infos.raw,
                          'tracker_post_id of %s in unknown' % tracker.pk)
-
-    def test_landing_page_view_exception(self):
-        target = 'http://www.simplehtmlguide.com/examples/forms1.html'
-
-        # We create a landing page
-        lp = LandingPage.objects.create(
-            name='Test delete perm',
-            html=clone_url(target)
-        )
-
-        et = EmailTemplate.objects.create(
-            name='Test landing page view',
-            email_subject='foo bar',
-            text_content='lorem ipsum',
-            landing_page_id=lp.pk,
-        )
-
-        # We create a campaign
-        camp = Campaign.objects.create(
-            email_template_id=et.pk,
-            name='Test landing page campaign'
-        )
-        target_grp = TargetGroup.objects.get(pk=1)
-        camp.target_groups_add(target_grp)
-        self.assertTrue(camp.send())
-
-        tracker = camp.trackers.filter(key='landing_page_open').first()
-
-        # set incorrect value for make crash
-        tracker.campaign_id = 99999999
-        tracker.save()
-
-        resp = self.client.get(reverse('landing_page', args=(tracker.uuid,)))
-
-        # Strange behavior, google set multiple redirect.
-        # So we can't use "assertRedirect" function
-        self.assertEqual(resp.status_code, 302)
-        self.assertEqual(resp['Location'], 'https://www.google.com/')
 
     def test_landing_page_post(self):
         target = 'http://www.simplehtmlguide.com/examples/forms1.html'
