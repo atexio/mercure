@@ -76,7 +76,7 @@ class AttachmentTestCase(TestCase):
 
     def test_build_invalid_zip(self):
         campaign = self._create_campaign()
-        
+
         attachment_name = 'build.json'
         attachment_path = os.path.join(settings.MEDIA_ROOT, 'test_attachment')
         copyfile(os.path.join(FILES_PATH, 'invalid_archive.zip'),

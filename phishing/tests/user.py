@@ -67,7 +67,7 @@ class PermissionTestCase(TestCase):
         url = reverse('campaign_add')
         campaign_infos['name'] = 'test 4'
         response = self.client.post(url, campaign_infos)
-        self.assertEqual(response.status_code, 403)        
+        self.assertEqual(response.status_code, 403)
 
     def test_permission(self):
         permissions = ['view_emailtemplate', 'view_targetgroup']

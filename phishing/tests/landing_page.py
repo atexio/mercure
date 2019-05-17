@@ -1,7 +1,6 @@
 import bs4 as BeautifulSoup
 import os
 import requests
-import uuid
 
 from django.test import TestCase
 from django.urls import reverse
