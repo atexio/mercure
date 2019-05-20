@@ -61,15 +61,13 @@ class PermissionTestCase(TestCase):
         # delete not authorized
         url = reverse('campaign_delete', args=(campaign.pk,))
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, '/accounts/login/?next=%s' % url)
+        self.assertEqual(response.status_code, 403)
 
         # add not authorized
         url = reverse('campaign_add')
         campaign_infos['name'] = 'test 4'
         response = self.client.post(url, campaign_infos)
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, '/accounts/login/?next=%s' % url)
+        self.assertEqual(response.status_code, 403)
 
     def test_permission(self):
         permissions = ['view_emailtemplate', 'view_targetgroup']
