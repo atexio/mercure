@@ -125,6 +125,8 @@ def landing_page(request, tracker_id):
                                   landing_page=landing_page)
 
         return HttpResponse(landing_page.html, content_type='text/html')
+    # TODO: It seems that django correctly handle foreignkey
+    # an this case is not possible anymore.
     except Exception as e:
         tracker_infos.raw = '%s: %s' % (e.__class__.__name__, e)
         tracker_infos.save()

@@ -2,14 +2,18 @@ import json
 import os
 
 from shutil import copyfile
+from datetime import timedelta
 
 from django.conf import settings
 from django.core.exceptions import SuspiciousOperation
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.urls import reverse
+from django.utils.timezone import now
 
 from phishing.models import Attachment, Tracker
+from phishing.models import Campaign
+from phishing.models import EmailTemplate
 from phishing.strings import TRACKER_ATTACHMENT_EXECUTED
 from phishing.tests.constant import FILES_PATH, FIXTURE_PATH
 
@@ -21,7 +25,25 @@ class AttachmentTestCase(TestCase):
         os.path.join(FIXTURE_PATH, 'user.json'),
     ]
 
+    def _create_campaign(self):
+        # add email template
+        email_template = EmailTemplate.objects.create(
+            email_subject='Hello!',
+            from_email='account@example.com',
+            name='email template name',
+            text_content='Goodbye!',
+        )
+
+        # create campaign
+        return Campaign.objects.create(
+            email_template=email_template,
+            name='test group graph',
+            send_at=now() + timedelta(hours=1)
+        )
+
     def test_build(self):
+        campaign = self._create_campaign()
+
         attachment_name = 'build.json'
         attachment_path = os.path.join(settings.MEDIA_ROOT, 'test_attachment')
         copyfile(os.path.join(FILES_PATH, 'archive.zip'), attachment_path)
@@ -34,7 +56,7 @@ class AttachmentTestCase(TestCase):
 
         kwargs = {
             'key': TRACKER_ATTACHMENT_EXECUTED,
-            'campaign_id': 1,
+            'campaign_id': campaign.pk,
             'target_id': 1,
             'value': 'tracker: not opened',
         }
@@ -53,6 +75,8 @@ class AttachmentTestCase(TestCase):
         os.remove(attachment_path)
 
     def test_build_invalid_zip(self):
+        campaign = self._create_campaign()
+
         attachment_name = 'build.json'
         attachment_path = os.path.join(settings.MEDIA_ROOT, 'test_attachment')
         copyfile(os.path.join(FILES_PATH, 'invalid_archive.zip'),
@@ -66,7 +90,7 @@ class AttachmentTestCase(TestCase):
 
         kwargs = {
             'key': TRACKER_ATTACHMENT_EXECUTED,
-            'campaign_id': 1,
+            'campaign_id': campaign.pk,
             'target_id': 1,
             'value': 'tracker: not opened',
         }
@@ -75,6 +99,8 @@ class AttachmentTestCase(TestCase):
             attachment.build(tracker)
 
     def test_build_static(self):
+        campaign = self._create_campaign()
+
         attachment_name = 'b64.png'
         attachment_path = os.path.join(settings.MEDIA_ROOT, 'test_attachment')
         copyfile(os.path.join(FILES_PATH, 'image.png'), attachment_path)
@@ -87,7 +113,7 @@ class AttachmentTestCase(TestCase):
 
         kwargs = {
             'key': TRACKER_ATTACHMENT_EXECUTED,
-            'campaign_id': 1,
+            'campaign_id': campaign.pk,
             'target_id': 1,
             'value': 'tracker: not opened',
         }
