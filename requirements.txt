@@ -1,5 +1,5 @@
 # Basics
-django==2.2.1
+django==2.2.2
 djangorestframework==3.9.4
 
 # Templates
@@ -27,7 +27,7 @@ pytz==2019.1
 unipath==1.1
 
 # Testing
-freezegun==0.3.11
+freezegun==0.3.12
 selenium==3.141.0
 
 # Documentation
