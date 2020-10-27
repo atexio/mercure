@@ -15,7 +15,7 @@ django-axes==4.5.4
 # Data parsing
 beautifulsoup4==4.7.1
 html5lib==1.0.1
-cchardet==2.1.4
+cchardet==2.1.7
 
 # Networking
 requests==2.22.0
