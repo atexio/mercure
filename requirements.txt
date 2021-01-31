@@ -4,7 +4,7 @@ djangorestframework==3.9.4
 
 # Templates
 django-bootstrap-form==3.4
-jinja2==2.10.1
+jinja2==2.11.3
 
 # Debugging
 raven==6.10.0
